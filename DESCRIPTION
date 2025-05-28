@@ -1,10 +1,10 @@
-Package: fcm
+Package: sfcm
 Type: Package
-Title: Flux Collision Model
+Title: Stochastic Flux Collision Model
 Version: 0.0.9000
 Authors@R: 
     person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre"))
-Description: Run Flux Collision Models.
+Description: Run stochastic Flux Collision Models that allow for uncertainty in parameters.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

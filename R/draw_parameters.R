@@ -8,14 +8,14 @@
 #' parameter values from a truncated normal distribution `n_iterations` using a `mean` and `sd`.
 #' By default, the `TruncNorm` option assumes infinite lower and upper bounds, but these
 #' can be specified by the user.
-#' @param par_name
-#' @param draw_method
-#' @param par_vec
-#' @param n_iterations
-#' @param mean
-#' @param sd
-#' @param lower_bound
-#' @param upper_bound
+#' @param par_name A parameter name.
+#' @param draw_method The method used to draw values.
+#' @param par_vec A parameter vector.
+#' @param n_iterations The number of values to draw.
+#' @param mean Mean value for the `TruncNorm` draw method.
+#' @param sd Standard deviation for the `TruncNorm` draw method.
+#' @param lower_bound Upper bound for truncation for the `TruncNorm` draw method.
+#' @param upper_bound Lower bound for truncation for the `TruncNorm` draw method.
 #' @export
 draw_parameters <- function(par_name,
                             draw_method,
