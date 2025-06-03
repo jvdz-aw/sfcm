@@ -2,7 +2,7 @@
 % Please edit documentation in R/sfcm.R
 \name{fcm}
 \alias{fcm}
-\title{Flux Collision Model}
+\title{Definition of the Flux Collision Model.}
 \usage{
 fcm(
   flux,
@@ -47,8 +47,6 @@ all of the estimated flux goes through a wind farm.}
 \item{p_col}{Collision probability estimated in the reference wind farm}
 }
 \description{
-A simplified implementation of the Flux Collision Model from Kleyheeg-Hartman et al. (2018)
-}
-\details{
-Estimate bird mortality due to collisions with wind turbines using the Flux Collision Model.
+This function represents the core definition of the Flux Collision
+Model from Kleyheeg-Hartman et al. (2018).
 }
