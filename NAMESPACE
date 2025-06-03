@@ -2,3 +2,8 @@
 
 export(draw_parameters)
 export(fcm)
+export(run_model)
+importFrom(dplyr,mutate)
+importFrom(dplyr,relocate)
+importFrom(dplyr,rowwise)
+importFrom(tidyr,unnest)

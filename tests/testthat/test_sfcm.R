@@ -13,6 +13,24 @@ turbs_e <- 2
 turbs_e_ref <- 4.242641
 p_col <- 0.0017
 
+# Create a test model input dataframe
+test_model_input <- data.frame(
+  flux = flux,
+  a_macro = a_macro,
+  h_prop = h_prop,
+  h_prop_ref = h_prop_ref,
+  rotor_d = rotor_d,
+  rotor_d_ref = rotor_d_ref,
+  turb_dist = turb_dist,
+  turb_dist_ref = turb_dist_ref,
+  turbs_e = turbs_e,
+  turbs_e_ref = turbs_e_ref,
+  p_col = p_col
+)
+
+# Set seed for testing simulation
+set.seed(1337)
+
 # Test numeric input checking failure
 test_that("Test numeric input checking failure", {
 
@@ -81,4 +99,22 @@ test_that("Test a single mortality calculation using FCM", {
 
   # Compare estimate with expected value with tolerance up to three decimals
   expect_equal(mortality, exp_mort, tolerance = 0.001)
+})
+
+
+# Test simulation flux parameter estimates under Poisson distribution
+test_that("Test simulation using Poisson distribution in stochastic FCM", {
+
+  # Set number of iterations
+  n_iter <- 10000
+
+  # Run calculation using test model input
+  mortality <- run_model(model_input = test_model_input,
+                         model_type = "sfcm",
+                         n_iter = n_iter)
+
+  # The mean and variance of the simulated flux estimates should be approximately
+  # equal to the observed flux estimate used as lambda parameter with some tolerance (allow 0.1% difference)
+  expect_equal(mean(mortality$flux), flux, tolerance = flux * 0.001)
+  expect_equal(var(mortality$flux), flux, tolerance = flux * 0.001)
 })
