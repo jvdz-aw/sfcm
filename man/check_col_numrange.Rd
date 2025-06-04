@@ -4,10 +4,9 @@
 \alias{check_col_numrange}
 \title{Check numeric range columns}
 \usage{
-check_col_numrange(col_values, col_min, col_max, col_name)
+check_col_numrange(col_values)
 }
 \description{
 This helper function checks whether a columns contains positive
-numbers in the range [arg_min, arg_max]. Stops execution and prints the column
-name to the user if it contains invalid values.
+numbers in the range [0, 1]. Returns FALSE if data is valid, and TRUE if data is invalid.
 }
