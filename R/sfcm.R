@@ -24,21 +24,6 @@ fcm <- function(flux, a_macro,
                 turbs_e, turbs_e_ref,
                 p_col, ...) {
 
-  # Check numeric args
-  check_arg_num(arg = flux, arg_name = "flux")
-  check_arg_num(arg = rotor_d, arg_name = "rotor_d")
-  check_arg_num(arg = turb_dist, arg_name = "turb_dist")
-  check_arg_num(arg = turb_dist_ref, arg_name = "turb_dist_ref")
-  check_arg_num(arg = turbs_e, arg_name = "turbs_e")
-  check_arg_num(arg = turbs_e_ref, arg_name = "turbs_e_ref")
-
-  # Check numeric range args (in range [0, 1])
-  check_arg_numrange(arg = a_macro, arg_name = "a_macro", arg_min = 0, arg_max = 1)
-  check_arg_numrange(arg = f_prop, arg_name = "f_prop", arg_min = 0, arg_max = 1)
-  check_arg_numrange(arg = h_prop, arg_name = "h_prop", arg_min = 0, arg_max = 1)
-  check_arg_numrange(arg = h_prop_ref, arg_name = "h_prop_ref", arg_min = 0, arg_max = 1)
-  check_arg_numrange(arg = p_col, arg_name = "p_col", arg_min = 0, arg_max = 1)
-
   # calculate flux at rotor height using h * (h / h_ref)
   flux_rotor_height <- (h_prop) / h_prop_ref
 
@@ -77,7 +62,8 @@ fcm <- function(flux, a_macro,
 #' @export
 run_model <- function(model_input, model_type = "sfcm", n_iter = 10000) {
 
-  # TODO move input checks here instead of in model definition
+  # Check model input
+  check_model_input(model_input)
 
   # First check whether stochastic variant was selected, for which simulations need to be added to input
   if (model_type == "sfcm") {
