@@ -3,6 +3,7 @@ library(testthat)
 # Define parameters for testing
 flux <- 17236.1111
 a_macro <- 0.6
+f_prop <- 1
 h_prop <- 0.46961326
 h_prop_ref <- 0.67
 rotor_d <- 170
@@ -17,6 +18,7 @@ p_col <- 0.0017
 test_model_input <- data.frame(
   flux = flux,
   a_macro = a_macro,
+  f_prop = f_prop,
   h_prop = h_prop,
   h_prop_ref = h_prop_ref,
   rotor_d = rotor_d,
@@ -30,53 +32,6 @@ test_model_input <- data.frame(
 
 # Set seed for testing simulation
 set.seed(1337)
-
-# Test numeric input checking failure
-test_that("Test numeric input checking failure", {
-
-  # Define bad parameter input
-  bad_flux <- "17236.1111"
-
-  # Test expected failure
-  expect_error(
-    fcm(flux = bad_flux,
-      a_macro = a_macro,
-      h_prop = h_prop,
-      h_prop_ref = h_prop_ref,
-      rotor_d = rotor_d,
-      rotor_d_ref = rotor_d_ref,
-      turb_dist = turb_dist,
-      turb_dist_ref = turb_dist_ref,
-      turbs_e = turbs_e,
-      turbs_e_ref = turbs_e_ref,
-      p_col = p_col),
-    regexp = "Error: parameter flux must be a positive number.") # Check error message
-
-})
-
-
-# Test numeric range input checking failure
-test_that("Test numeric range input checking failure", {
-
-  # Define bad parameter input
-  bad_p_col <- 1.2
-
-  # Test expected failure
-  expect_error(
-    fcm(flux = bad_p_col,
-        a_macro = a_macro,
-        h_prop = h_prop,
-        h_prop_ref = h_prop_ref,
-        rotor_d = rotor_d,
-        rotor_d_ref = rotor_d_ref,
-        turb_dist = turb_dist,
-        turb_dist_ref = turb_dist_ref,
-        turbs_e = turbs_e,
-        turbs_e_ref = turbs_e_ref,
-        p_col = bad_p_col),
-    regexp = "Error: parameter p_col must be a number between 0 and 1.") # Check error message
-})
-
 
 # Test mortality calculation using FCM
 test_that("Test a single mortality calculation using FCM", {
@@ -117,4 +72,57 @@ test_that("Test simulation using Poisson distribution in stochastic FCM", {
   # equal to the observed flux estimate used as lambda parameter with some tolerance (allow 0.1% difference)
   expect_equal(mean(mortality$flux), flux, tolerance = flux * 0.001)
   expect_equal(var(mortality$flux), flux, tolerance = flux * 0.001)
+})
+
+
+# Test run model failure on missing column
+test_that("Test run model failure due to missing column in input", {
+
+  # Remove a column from the test model input
+  test_model_input_missing_col <- test_model_input[, !names(test_model_input) %in% c("f_prop")]
+
+  # Set number of iterations
+  n_iter <- 10
+
+  # Run calculation using test model input with missing column
+  expect_error(run_model(model_input = test_model_input_missing_col,
+                         model_type = "sfcm",
+                         n_iter = n_iter),
+               "Error: the following columns are missing: f_prop")
+
+})
+
+# Test run model failure on misspelled column
+test_that("Test run model failure due to misspelled column name", {
+
+  # Rename a column from the test model input
+  test_model_input_misspelled_col <- test_model_input
+  names(test_model_input_misspelled_col)[names(test_model_input_misspelled_col) == "a_macro"] <- "A_macro"
+
+  # Set number of iterations
+  n_iter <- 10
+
+  # Run calculation using test model input with missing column
+  expect_error(run_model(model_input = test_model_input_misspelled_col,
+                         model_type = "sfcm",
+                         n_iter = n_iter),
+               "Error: the following columns are missing: a_macro")
+
+})
+
+# Test run model failure on invalid data
+test_that("Test run model failure due to invalid data in column", {
+
+  # Create model input with invalid data
+  test_model_input_invalid_data <- test_model_input
+  test_model_input_invalid_data$flux <- "15"
+
+  # Set number of iterations
+  n_iter <- 10
+
+  # Run calculation using test model input with missing column
+  expect_error(run_model(model_input = test_model_input_invalid_data,
+                         model_type = "sfcm",
+                         n_iter = n_iter),
+               "Error: the following columns contain invalid data: flux")
 })
