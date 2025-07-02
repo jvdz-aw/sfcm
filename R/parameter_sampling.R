@@ -106,3 +106,64 @@ get_allowed_dists <- function() {
     "p_col" = c("beta")
   )
 }
+
+
+#' Simulate parameters
+#'
+#' @description
+#' Generate random samples of a parameter using one of the available sampling functions.
+#'
+#' @param data A dataframe or tibble containing input parameters for simulation.
+#' @param parameters A vector of parameters to simulate.
+#' @param distributions A named list containing mappings of parameters to distributions.
+#' @param n The number of random samples to generate.
+#'
+#' @return A dataframe with `n` rows containing simulated parameters.
+#' @importFrom purrr reduce
+#' @importFrom tidyr unnest matches
+#' @importFrom dplyr select
+simulate_parameters <- function(data, parameters, distributions, n = 1000) {
+
+  # Get allowed distributions per parameter
+  allowed_distributions <- get_allowed_dists()
+
+  # Get sampling dispatch
+  sampling_dispatch <- get_sampling_dispatch()
+
+  # Check that requested distributions are valid for each parameter
+  for (parameter in parameters) {
+    if (!parameter %in% names(distributions)) {
+      stop(paste("No distribution specified for parameter:", parameter))
+    }
+    if (!parameter %in% names(allowed_distributions)) {
+      stop(paste("Parameter not recognized:", parameter))
+    }
+    chosen_distribution <- distributions[[parameter]]
+    if (!chosen_distribution %in% allowed_distributions[[parameter]]) {
+      stop(paste0("Distribution '", chosen_distribution, "' not allowed for parameter '", parameter, "'"))
+    }
+  }
+
+  # Add simulation IDs per row
+  data <- data %>%
+    mutate(simulation_id = map(seq_len(nrow(data)), ~ seq_len(n)))
+
+  # Simulate values
+  data <- reduce(parameters, function(df, parameter) {
+
+    # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
+    dist_name <- distributions[[parameter]]
+    dist_func <- sampling_dispatch[[dist_name]]
+
+    # Generate random samples
+    samples <- dist_func(df, parameter, n)
+    df[[parameter]] <- samples
+    df
+  }, .init = data)
+
+  # Unnest simulation_id and all parameter columns, then remove columns with mean and sd
+  data %>%
+    unnest(cols = c(simulation_id, all_of(parameters))) %>%
+    select(!matches("_mean|_sd"))
+}
+

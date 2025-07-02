@@ -160,3 +160,46 @@ test_that("get_allowed_dists returns the correct mappings", {
   expect_equal(length(allowed[[exp_names[3]]]), 1)
 
 })
+
+
+test_that("simulate_parameters runs without errors", {
+
+  # Generate test dataframe with two rows
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e_mean = c(4, 2),
+    turbs_e_sd = 0,
+    turbs_e_ref = 4.242641,
+    p_col_mean = c(0.5, 0.8),
+    p_col_sd = c(0.05, 0.1)
+  )
+
+  parameters <- c("flux", "turbs_e", "p_col")
+  n_sims <- 500
+
+  # Should run without errors
+  res <- expect_no_error(simulate_parameters(data = test_df,
+                             parameters = parameters,
+                             distributions = list("flux" = "poisson",
+                                                  "turbs_e" = "poisson",
+                                                  "p_col" = "beta"),
+                             n = n_sims))
+
+  # Check whether the correct columns are returned
+  exp_cols <- c(names(dplyr::select(test_df, !tidyr::matches("_mean|_sd"))), "simulation_id", parameters)
+  expect_setequal(exp_cols, names(res))
+
+  # Number of rows should be equal to nrows test_df times n_sims
+  exp_nrows <- nrow(test_df) * n_sims
+  expect_equal(exp_nrows, nrow(res))
+})
