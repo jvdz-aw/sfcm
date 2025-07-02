@@ -123,3 +123,40 @@ test_that("sample_nbinom returns values with correct mean and sd", {
   expect_equal(obs_means, exp_means, tolerance = 0.2)
   expect_equal(obs_sds, exp_sds, tolerance = 0.2)
 })
+
+
+test_that("get_sampling_dispatch returns the correct mappings", {
+
+  # Get sampling dispatch
+  dispatch <- get_sampling_dispatch()
+
+  # Should be a list
+  expect_type(dispatch, "list")
+
+  # Check expected names
+  exp_names <- c("normal", "poisson", "beta", "nbinom")
+  expect_setequal(names(dispatch), exp_names)
+
+  # All elements should be functions
+  expect_true(all(purrr::map_lgl(dispatch, is.function)))
+
+})
+
+
+test_that("get_allowed_dists returns the correct mappings", {
+
+  # Get allowed distributions
+  allowed <- get_allowed_dists()
+
+  # Should be a list
+  expect_type(allowed, "list")
+
+  # Check expected names
+  exp_names <- c("flux", "turbs_e", "p_col")
+
+  # Check element lengths
+  expect_equal(length(allowed[[exp_names[1]]]), 3)
+  expect_equal(length(allowed[[exp_names[2]]]), 1)
+  expect_equal(length(allowed[[exp_names[3]]]), 1)
+
+})

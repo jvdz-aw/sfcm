@@ -73,3 +73,36 @@ sample_nbinom <- function(df, param, n) {
   map2(k, mu, ~rnbinom(n, size = .x, mu = .y))
 }
 
+
+#' Get sampling dispatch
+#'
+#' This internal function returns a named list mapping available sampling method
+#' keywords to the sampling functions.
+#'
+#' @returns A named list mapping sampling method keywords to functions.
+#' @keywords internal
+get_sampling_dispatch <- function() {
+  list(
+    "normal" = sample_norm,
+    "poisson" = sample_poisson,
+    "beta" = sample_beta,
+    "nbinom" = sample_nbinom
+  )
+}
+
+
+#' Get allowed distributions
+#'
+#' This internal function returns a named list mapping parameter keywords to vectors
+#' of distributions. This list specifies which distributions are allowed
+#' for each parameter that can be sampled.
+#'
+#' @returns A named list mapping parameter keywords to distributions.
+#' @keywords internal
+get_allowed_dists <- function() {
+  list(
+    "flux" = c("normal", "poisson", "nbinom"),
+    "turbs_e" = c("poisson"),
+    "p_col" = c("beta")
+  )
+}
