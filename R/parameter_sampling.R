@@ -130,14 +130,17 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
   # Get sampling dispatch
   sampling_dispatch <- get_sampling_dispatch()
 
-  # Check that requested distributions are valid for each parameter
+  # Peform checks on parameters
   for (parameter in parameters) {
+
     if (!parameter %in% names(distributions)) {
       stop(paste("No distribution specified for parameter:", parameter))
     }
+
     if (!parameter %in% names(allowed_distributions)) {
       stop(paste("Parameter not recognized:", parameter))
     }
+
     chosen_distribution <- distributions[[parameter]]
     if (!chosen_distribution %in% allowed_distributions[[parameter]]) {
       stop(paste0("Distribution '", chosen_distribution, "' not allowed for parameter '", parameter, "'"))

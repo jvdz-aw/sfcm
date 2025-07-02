@@ -203,3 +203,68 @@ test_that("simulate_parameters runs without errors", {
   exp_nrows <- nrow(test_df) * n_sims
   expect_equal(exp_nrows, nrow(res))
 })
+
+
+test_that("simulate_parameters fails on missing specified distribution", {
+
+  # Generate test dataframe with two rows
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50)
+  )
+
+  parameters <- c("flux")
+  n_sims <- 500
+
+  # Should run without errors
+  expect_error(simulate_parameters(
+    data = test_df,
+    parameters = parameters,
+    distributions = list("flxu" = "poisson"),
+    n = n_sims), "No distribution specified for parameter: flux")
+
+})
+
+
+test_that("simulate_parameters fails on missing specified distribution", {
+
+  # Generate test dataframe with two rows
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50)
+  )
+
+  # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
+  expect_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flxu" = "poisson"), n = 10), "No distribution specified for parameter: flux")
+})
+
+
+test_that("simulate_parameters fails on selected of unsupported parameter to simulate", {
+
+  # Generate test dataframe with two rows
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50),
+    rotor_d = 170
+  )
+
+  # Should fail because an unsupported parameter is selected for simulation
+  expect_error(simulate_parameters(data = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "Parameter not recognized: rotor_d")
+})
+
+
+test_that("simulate_parameters fails on selecting invalid distribution", {
+
+  # Generate test dataframe with two rows
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50)
+  )
+
+  # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
+  expect_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Distribution 'beta' not allowed for parameter 'flux'")
+})
