@@ -118,10 +118,12 @@ get_allowed_dists <- function() {
 #' @param distributions A named list containing mappings of parameters to distributions.
 #' @param n The number of random samples to generate.
 #'
-#' @return A dataframe with `n` rows containing simulated parameters.
+#' @returns A dataframe with `n` rows containing simulated parameters.
 #' @importFrom purrr reduce
 #' @importFrom tidyr unnest matches
 #' @importFrom dplyr select
+#' @importFrom magrittr `%>%`
+#' @export
 simulate_parameters <- function(data, parameters, distributions, n = 1000) {
 
   # Get allowed distributions per parameter
