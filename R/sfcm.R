@@ -44,56 +44,33 @@ fcm <- function(flux, a_macro,
 }
 
 
-#' Run non-stochastic or stochastic variant of the flux collision model
+#' Run the flux collision model on a dataframe of model input parameters
 #'
 #' @description Estimate bird mortality due to collisions with wind turbines using either
-#' the non-stochastic or stochastic version of the flux collision model. The stochastic
-#' variant allows the incorporation of uncertainty in the flux parameter using a simulation
-#' approach. Parameter uncertainty is modeled by drawing parameter values from
-#' a probability distribution. Currently supports simulation of flux estimates using
-#' a Poisson distribution.
-#' @param model_input A dataframe or tibble containing input parameters for the flux collision model.
-#' @param model_type A string indicating whether to run the stochastic variant (default: `sfcm`) or
-#' non-stochastic variant (`fcm`).
-#' @param n_iter The number of iterations (default: 10000) when running the stochastic flux collision
-#' model.
-#' @importFrom dplyr mutate rowwise relocate
-#' @importFrom tidyr unnest
+#' the stochastic or non-stochastic version of the flux collision model.
+#'
+#' @param model_input A dataframe containing input parameters for the flux collision model.
+#' @returns
+#' A dataframe similar to `model_input` that includes a column `mortality` containing bird mortality estimates.
+#' @importFrom dplyr mutate
+#' @importFrom purrr pmap_dbl
 #' @export
-run_model <- function(model_input, model_type = "sfcm", n_iter = 10000) {
+run_model <- function(model_input) {
 
   # Check model input
   check_model_input(model_input)
 
-  # First check whether stochastic variant was selected, for which simulations need to be added to input
-  if (model_type == "sfcm") {
-    model_input <- model_input %>%
-      mutate(n_iter = n_iter) %>%
-      rowwise() %>%
-      mutate(sim_id = list(1:n_iter),
-             flux = list(rpois(n = n_iter, lambda = flux))) %>%
-      unnest(cols = c("sim_id", "flux")) %>%
-      relocate(sim_id, n_iter, .before = flux)
-  } else if (model_type == "fcm") {
-    next # No need to do anything if you want the non-stochastic variant
-  } else (
-    stop("Error: invalid model type specified.")
-  )
-
-  # Apply the flux collision model to each row in the model input dataframe
-  model_output <- model_input %>%
-    rowwise() %>%
-    mutate(mortality = fcm(flux = flux,
-                           a_macro = a_macro,
-                           h_prop = h_prop,
-                           h_prop_ref = h_prop_ref,
-                           rotor_d = rotor_d,
-                           rotor_d_ref = rotor_d_ref,
-                           turb_dist = turb_dist,
-                           turb_dist_ref = turb_dist_ref,
-                           turbs_e = turbs_e,
-                           turbs_e_ref = turbs_e_ref,
-                           p_col = p_col))
-
-  return(model_output)
+  # Apply function to each row in model input dataframe
+  model_input %>%
+    mutate(mortality = pmap_dbl(list(flux = flux,
+                                     a_macro = a_macro,
+                                     h_prop = h_prop,
+                                     h_prop_ref = h_prop_ref,
+                                     rotor_d = rotor_d,
+                                     rotor_d_ref = rotor_d_ref,
+                                     turb_dist = turb_dist,
+                                     turb_dist_ref = turb_dist_ref,
+                                     turbs_e = turbs_e,
+                                     turbs_e_ref = turbs_e_ref,
+                                     p_col = p_col), fcm))
 }

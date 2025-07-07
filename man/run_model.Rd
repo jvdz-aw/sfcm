@@ -2,24 +2,17 @@
 % Please edit documentation in R/sfcm.R
 \name{run_model}
 \alias{run_model}
-\title{Run non-stochastic or stochastic variant of the flux collision model}
+\title{Run the flux collision model on a dataframe of model input parameters}
 \usage{
-run_model(model_input, model_type = "sfcm", n_iter = 10000)
+run_model(model_input)
 }
 \arguments{
-\item{model_input}{A dataframe or tibble containing input parameters for the flux collision model.}
-
-\item{model_type}{A string indicating whether to run the stochastic variant (default: `sfcm`) or
-non-stochastic variant (`fcm`).}
-
-\item{n_iter}{The number of iterations (default: 10000) when running the stochastic flux collision
-model.}
+\item{model_input}{A dataframe containing input parameters for the flux collision model.}
+}
+\value{
+A dataframe similar to `model_input` that includes a column `mortality` containing bird mortality estimates.
 }
 \description{
 Estimate bird mortality due to collisions with wind turbines using either
-the non-stochastic or stochastic version of the flux collision model. The stochastic
-variant allows the incorporation of uncertainty in the flux parameter using a simulation
-approach. Parameter uncertainty is modeled by drawing parameter values from
-a probability distribution. Currently supports simulation of flux estimates using
-a Poisson distribution.
+the stochastic or non-stochastic version of the flux collision model.
 }
