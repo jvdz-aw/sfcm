@@ -120,9 +120,11 @@ get_allowed_dists <- function() {
 #'
 #' @returns A dataframe with `n` rows containing simulated parameters.
 #' @importFrom purrr reduce
-#' @importFrom tidyr unnest matches
-#' @importFrom dplyr select
+#' @importFrom tidyr unnest
 #' @importFrom magrittr `%>%`
+#' @importFrom dplyr select rename_with relocate
+#' @importFrom stringr str_remove
+#' @importFrom tidyselect all_of any_of last_col
 #' @export
 simulate_parameters <- function(data, parameters, distributions, n = 1000) {
 
@@ -153,7 +155,7 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
   data <- data %>%
     mutate(simulation_id = map(seq_len(nrow(data)), ~ seq_len(n)))
 
-  # Simulate values
+  # Simulate values using reduce instead of a for-loop for efficiency
   data <- reduce(parameters, function(df, parameter) {
 
     # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
@@ -162,13 +164,34 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
 
     # Generate random samples
     samples <- dist_func(df, parameter, n)
-    df[[parameter]] <- samples
+
+    # Add generated samples to a new column named `<parameter>_samples`
+    sample_col <- paste0(parameter, "_samples")
+    df[[sample_col]] <- samples
     df
   }, .init = data)
 
-  # Unnest simulation_id and all parameter columns, then remove columns with mean and sd
+  # Define columns that need to be renamed or removed
+  pars_allowed <- names(allowed_distributions)
+  pars_not_to_sim <- pars_allowed[!pars_allowed %in% parameters]
+  cols_to_rename <- c(paste0(pars_not_to_sim, "_mean"), paste0(parameters, "_samples"))
+  cols_to_remove <- c(paste0(pars_allowed, "_sd"), paste0(parameters, "_mean"))
+
+  # Define a column order
+  col_order <- c("flux",
+                 "a_macro",
+                 "f_prop",
+                 "h_prop", "h_prop_ref",
+                 "rotor_d", "rotor_d_ref",
+                 "turb_dist", "turb_dist_ref",
+                 "turbs_e", "turbs_e_ref",
+                 "p_col")
+
+  # Unnest simulation_id and all parameter columns, then perform some renaming and clean up
   data %>%
-    unnest(cols = c(simulation_id, all_of(parameters))) %>%
-    select(!matches("_mean|_sd"))
+    unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>%
+    select(!any_of(cols_to_remove)) %>%
+    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_rename)) %>%
+    relocate(all_of(col_order), .after = last_col())
 }
 
