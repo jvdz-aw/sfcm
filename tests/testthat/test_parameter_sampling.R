@@ -3,13 +3,27 @@ library(testthat)
 # Set seed to ensure reproducibility
 set.seed(1337)
 
-test_that("sample_norm returns values with correct mean and sd", {
+# Define a test dataframe with two rows
+test_df <- data.frame(
+  species = c("A", "B"),
+  flux_mean = c(50, 100),
+  flux_sd = c(10, 50),
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.46961326,
+  h_prop_ref = 0.67,
+  rotor_d = 170,
+  rotor_d_ref = 60,
+  turb_dist = 628.6667,
+  turb_dist_ref = 250,
+  turbs_e_mean = c(4, 2),
+  turbs_e_sd = 0,
+  turbs_e_ref = 4.242641,
+  p_col_mean = c(0.5, 0.8),
+  p_col_sd = c(0.05, 0.1)
+)
 
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50)
-  )
+test_that("sample_norm returns values with correct mean and sd", {
 
   # Simulate flux using normal distribution
   samples <- sample_norm(test_df, "flux", n = 1000)
@@ -36,11 +50,6 @@ test_that("sample_norm returns values with correct mean and sd", {
 
 test_that("sample_poisson returns values with correct mean", {
 
-  # Generate test dataframe with three rows
-  test_df <- data.frame(
-    flux_mean = c(50, 100, 150)
-  )
-
   # Simulate flux using poisson distribution
   samples <- sample_poisson(test_df, "flux", n = 1000)
 
@@ -65,12 +74,6 @@ test_that("sample_poisson returns values with correct mean", {
 
 
 test_that("sample_beta returns values with correct mean and sd", {
-
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
-  )
 
   # Simulate flux using beta distribution
   samples <- sample_beta(test_df, "p_col", n = 1000)
@@ -97,12 +100,6 @@ test_that("sample_beta returns values with correct mean and sd", {
 
 test_that("sample_nbinom returns values with correct mean and sd", {
 
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50)
-  )
-
   # Simulate flux using normal distribution
   samples <- sample_nbinom(test_df, "flux", n = 1000)
 
@@ -119,9 +116,10 @@ test_that("sample_nbinom returns values with correct mean and sd", {
   exp_means <- test_df$flux_mean
   exp_sds <- test_df$flux_sd
 
-  # Test: means and sds should be close within tolerance
+  # Means and sds should be close within tolerance
   expect_equal(obs_means, exp_means, tolerance = 0.2)
   expect_equal(obs_sds, exp_sds, tolerance = 0.2)
+
 })
 
 
@@ -164,26 +162,6 @@ test_that("get_allowed_dists returns the correct mappings", {
 
 test_that("simulate_parameters runs without errors", {
 
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    species = c("A", "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50),
-    a_macro = 0.95,
-    f_prop = 1,
-    h_prop = 0.46961326,
-    h_prop_ref = 0.67,
-    rotor_d = 170,
-    rotor_d_ref = 60,
-    turb_dist = 628.6667,
-    turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
-    turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
-  )
-
   parameters <- c("flux", "turbs_e", "p_col")
   n_sims <- 500
 
@@ -196,23 +174,26 @@ test_that("simulate_parameters runs without errors", {
                              n = n_sims))
 
   # Check whether the correct columns are returned
-  exp_cols <- c(names(dplyr::select(test_df, !tidyr::matches("_mean|_sd"))), "simulation_id", parameters)
-  expect_setequal(exp_cols, names(res))
+  exp_cols <- c("species",
+                "simulation_id",
+                "flux",
+                "a_macro",
+                "f_prop",
+                "h_prop", "h_prop_ref",
+                "rotor_d", "rotor_d_ref",
+                "turb_dist", "turb_dist_ref",
+                "turbs_e", "turbs_e_ref",
+                "p_col")
+  expect_setequal(names(res), exp_cols)
 
   # Number of rows should be equal to nrows test_df times n_sims
   exp_nrows <- nrow(test_df) * n_sims
-  expect_equal(exp_nrows, nrow(res))
+  expect_equal(nrow(res), exp_nrows)
+
 })
 
 
 test_that("simulate_parameters fails on missing specified distribution", {
-
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    species = c("A", "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50)
-  )
 
   parameters <- c("flux")
   n_sims <- 500
@@ -227,44 +208,38 @@ test_that("simulate_parameters fails on missing specified distribution", {
 })
 
 
-test_that("simulate_parameters fails on missing specified distribution", {
-
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    species = c("A", "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50)
-  )
-
-  # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
-  expect_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flxu" = "poisson"), n = 10), "No distribution specified for parameter: flux")
-})
-
-
 test_that("simulate_parameters fails on selected of unsupported parameter to simulate", {
-
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    species = c("A", "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50),
-    rotor_d = 170
-  )
 
   # Should fail because an unsupported parameter is selected for simulation
   expect_error(simulate_parameters(data = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "Parameter not recognized: rotor_d")
+
 })
 
 
 test_that("simulate_parameters fails on selecting invalid distribution", {
 
-  # Generate test dataframe with two rows
-  test_df <- data.frame(
-    species = c("A", "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50)
-  )
-
   # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
   expect_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Distribution 'beta' not allowed for parameter 'flux'")
+
+})
+
+
+test_that("simulate_parameters runs without errors when using a subset of parameters to simulate", {
+
+  # Should run without error
+  res <- expect_no_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flux" = "poisson"), n = 10))
+
+  # Result should contain a column `flux_samples`
+  expect_true("flux" %in% names(res))
+
+  # Try another but with two parameters
+  res_two_pars <- expect_no_error(simulate_parameters(data = test_df, parameters = c("flux", "p_col"),
+                                                      distributions = list("flux" = "poisson",
+                                                                           "p_col" = "beta"),
+                                                      n = 10))
+
+  # Result should contain two columns: `flux_samples` and `p_col_samples`
+  expect_true("flux" %in% names(res_two_pars))
+  expect_true("p_col" %in% names(res_two_pars))
+
 })
