@@ -134,7 +134,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   # Get sampling dispatch
   sampling_dispatch <- get_sampling_dispatch()
 
-  # Peform checks on parameters
+  # Perform checks on parameters
   for (parameter in parameters) {
 
     if (!parameter %in% names(distributions)) {
@@ -177,15 +177,9 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   cols_to_rename <- c(paste0(pars_not_to_sim, "_mean"), paste0(parameters, "_samples"))
   cols_to_remove <- c(paste0(pars_allowed, "_sd"), paste0(parameters, "_mean"))
 
-  # Define a column order
-  col_order <- c("flux",
-                 "a_macro",
-                 "f_prop",
-                 "h_prop", "h_prop_ref",
-                 "rotor_d", "rotor_d_ref",
-                 "turb_dist", "turb_dist_ref",
-                 "turbs_e", "turbs_e_ref",
-                 "p_col")
+  # Define a column order based upon the model input data specification
+  data_spec <- model_input_data_spec()
+  col_order <- names(data_spec)
 
   # Unnest simulation_id and all parameter columns, then perform some renaming and clean up
   simulation_input %>%
