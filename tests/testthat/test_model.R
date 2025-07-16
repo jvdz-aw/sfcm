@@ -67,7 +67,7 @@ test_that("Test run model failure due to missing column in input", {
 
   # Run calculation using test model input with missing column
   expect_error(run_model(model_input = test_model_input_missing_col),
-               "Error: the following columns are missing: f_prop")
+               "the following columns are missing: f_prop")
 
 })
 
@@ -83,7 +83,7 @@ test_that("Test run model failure due to misspelled column name", {
 
   # Run calculation using test model input with missing column
   expect_error(run_model(model_input = test_model_input_misspelled_col),
-               "Error: the following columns are missing: a_macro")
+               "the following columns are missing: a_macro")
 
 })
 
@@ -99,7 +99,7 @@ test_that("Test run model failure due to invalid data in column", {
 
   # Run calculation using test model input with missing column
   expect_error(run_model(model_input = test_model_input_invalid_data),
-               "Error: the following columns contain invalid data: flux")
+               "the following columns contain invalid data: flux")
 })
 
 

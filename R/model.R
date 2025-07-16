@@ -58,7 +58,7 @@ fcm <- function(flux, a_macro,
 run_model <- function(model_input) {
 
   # Check model input
-  check_model_input(model_input)
+  validate_model_input(model_input)
 
   # Apply function to each row in model input dataframe
   model_input %>%
