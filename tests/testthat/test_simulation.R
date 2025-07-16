@@ -166,12 +166,13 @@ test_that("simulate_parameters runs without errors", {
   n_sims <- 500
 
   # Should run without errors
-  res <- expect_no_error(simulate_parameters(data = test_df,
-                             parameters = parameters,
-                             distributions = list("flux" = "poisson",
-                                                  "turbs_e" = "poisson",
-                                                  "p_col" = "beta"),
-                             n = n_sims))
+  res <- expect_no_error(simulate_parameters(simulation_input = test_df,
+                                             parameters = parameters,
+                                             distributions = list(
+                                               "flux" = "poisson",
+                                               "turbs_e" = "poisson",
+                                               "p_col" = "beta"),
+                                             n = n_sims))
 
   # Check whether the correct columns are returned
   exp_cols <- c("species",
@@ -200,7 +201,7 @@ test_that("simulate_parameters fails on missing specified distribution", {
 
   # Should run without errors
   expect_error(simulate_parameters(
-    data = test_df,
+    simulation_input = test_df,
     parameters = parameters,
     distributions = list("flxu" = "poisson"),
     n = n_sims), "No distribution specified for parameter: flux")
@@ -211,7 +212,7 @@ test_that("simulate_parameters fails on missing specified distribution", {
 test_that("simulate_parameters fails on selected of unsupported parameter to simulate", {
 
   # Should fail because an unsupported parameter is selected for simulation
-  expect_error(simulate_parameters(data = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "Parameter not recognized: rotor_d")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "Parameter not recognized: rotor_d")
 
 })
 
@@ -219,7 +220,7 @@ test_that("simulate_parameters fails on selected of unsupported parameter to sim
 test_that("simulate_parameters fails on selecting invalid distribution", {
 
   # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
-  expect_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Distribution 'beta' not allowed for parameter 'flux'")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Distribution 'beta' not allowed for parameter 'flux'")
 
 })
 
@@ -227,13 +228,13 @@ test_that("simulate_parameters fails on selecting invalid distribution", {
 test_that("simulate_parameters runs without errors when using a subset of parameters to simulate", {
 
   # Should run without error
-  res <- expect_no_error(simulate_parameters(data = test_df, parameters = "flux", distributions = list("flux" = "poisson"), n = 10))
+  res <- expect_no_error(simulate_parameters(simulation_input = test_df, parameters = "flux", distributions = list("flux" = "poisson"), n = 10))
 
   # Result should contain a column `flux_samples`
   expect_true("flux" %in% names(res))
 
   # Try another but with two parameters
-  res_two_pars <- expect_no_error(simulate_parameters(data = test_df, parameters = c("flux", "p_col"),
+  res_two_pars <- expect_no_error(simulate_parameters(simulation_input = test_df, parameters = c("flux", "p_col"),
                                                       distributions = list("flux" = "poisson",
                                                                            "p_col" = "beta"),
                                                       n = 10))

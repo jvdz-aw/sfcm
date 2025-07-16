@@ -128,7 +128,7 @@ test_that("simulate_parameters output can be used as input for running the model
   # Simulate parameters
   n_sims <- 5
   parameters <- c("flux", "turbs_e", "p_col")
-  model_input <- simulate_parameters(data = test_df,
+  model_input <- simulate_parameters(simulation_input = test_df,
                                      parameters = parameters,
                                      distributions = list("flux" = "poisson",
                                                           "turbs_e" = "poisson",

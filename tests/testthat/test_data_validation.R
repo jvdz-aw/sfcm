@@ -49,7 +49,7 @@ test_that("validate_model_input runs successfully on simulation output", {
     p_col_sd = c(0.05, 0.1)
   )
 
-  model_input <- simulate_parameters(data = test_df,
+  model_input <- simulate_parameters(simulation_input = test_df,
                                      parameters = "flux",
                                      distributions = list("flux" = "poisson",
                                                           "turbs_e" = "poisson",

@@ -113,7 +113,7 @@ get_allowed_dists <- function() {
 #' @description
 #' Generate random samples of a parameter using one of the available sampling functions.
 #'
-#' @param data A dataframe or tibble containing input parameters for simulation.
+#' @param simulation_input A dataframe containing input parameters for the simulation.
 #' @param parameters A vector of parameters to simulate.
 #' @param distributions A named list containing mappings of parameters to distributions.
 #' @param n The number of random samples to generate.
@@ -126,7 +126,7 @@ get_allowed_dists <- function() {
 #' @importFrom stringr str_remove
 #' @importFrom tidyselect all_of any_of last_col
 #' @export
-simulate_parameters <- function(data, parameters, distributions, n = 1000) {
+simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
 
   # Get allowed distributions per parameter
   allowed_distributions <- get_allowed_dists()
@@ -152,11 +152,11 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
   }
 
   # Add simulation IDs per row
-  data <- data %>%
-    mutate(simulation_id = map(seq_len(nrow(data)), ~ seq_len(n)))
+  simulation_input <- simulation_input %>%
+    mutate(simulation_id = map(seq_len(nrow(simulation_input)), ~ seq_len(n)))
 
   # Simulate values using reduce instead of a for-loop for efficiency
-  data <- reduce(parameters, function(df, parameter) {
+  simulation_input <- reduce(parameters, function(df, parameter) {
 
     # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
     dist_name <- distributions[[parameter]]
@@ -169,7 +169,7 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
     sample_col <- paste0(parameter, "_samples")
     df[[sample_col]] <- samples
     df
-  }, .init = data)
+  }, .init = simulation_input)
 
   # Define columns that need to be renamed or removed
   pars_allowed <- names(allowed_distributions)
@@ -188,7 +188,7 @@ simulate_parameters <- function(data, parameters, distributions, n = 1000) {
                  "p_col")
 
   # Unnest simulation_id and all parameter columns, then perform some renaming and clean up
-  data %>%
+  simulation_input %>%
     unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>%
     select(!any_of(cols_to_remove)) %>%
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_rename)) %>%
