@@ -4,7 +4,7 @@
 #'
 #' @returns TRUE if values are all positive numeric and FALSE if not
 is_valid_numcol <- function(col_values) {
-  is.numeric(col_values) & (col_values > 0)
+  is.numeric(col_values) & all(col_values >= 0)
 }
 
 
@@ -14,7 +14,7 @@ is_valid_numcol <- function(col_values) {
 #'
 #' @returns TRUE if values are all positive numeric between 0 and 1, FALSE if not
 is_valid_numrange <- function(col_values) {
-  is.numeric(col_values) & col_values >= 0 & col_values <= 1
+  is.numeric(col_values) & all(col_values >= 0) & all(col_values <= 1)
 }
 
 
@@ -33,10 +33,14 @@ validate_model_input <- function(model_input) {
 
   # Check for missing columns
   req_cols_present <- required_cols %in% names(model_input)
-  stopifnot("Error: not all required columns are present in the model input." = req_cols_present)
+  if (!all(req_cols_present)) {
+    stop(paste("the following columns are missing:", paste(required_cols[!req_cols_present], collapse = ", ")))
+  }
 
-  # Check whether column values are valid
-  col_vals_valid <- map_lgl(names(model_input), \(x) data_spec[[x]](model_input[[x]]))
-  stopifnot("Error: some columns contain invalid data." = col_vals_valid)
+  # Check whether column values are valid for required columns present in data
+  col_vals_valid <- map_lgl(required_cols[req_cols_present], \(x) data_spec[[x]](model_input[[x]]))
+  if (!all(col_vals_valid)) {
+    stop(paste("the following columns contain invalid data:", paste(required_cols[!col_vals_valid], collapse = ", ")))
+  }
 
 }
