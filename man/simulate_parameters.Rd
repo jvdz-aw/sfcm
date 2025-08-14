@@ -4,10 +4,10 @@
 \alias{simulate_parameters}
 \title{Simulate parameters}
 \usage{
-simulate_parameters(data, parameters, distributions, n = 1000)
+simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 }
 \arguments{
-\item{data}{A dataframe or tibble containing input parameters for simulation.}
+\item{simulation_input}{A dataframe containing input parameters for the simulation.}
 
 \item{parameters}{A vector of parameters to simulate.}
 
