@@ -3,6 +3,7 @@
 #' Internal function that checks whether a column contains positive numbers.
 #'
 #' @returns TRUE if values are all positive numeric and FALSE if not
+#' @keywords internal
 is_valid_numcol <- function(col_values) {
   is.numeric(col_values) & all(col_values >= 0) & all(!is.na(col_values))
 }
@@ -13,6 +14,7 @@ is_valid_numcol <- function(col_values) {
 #' This helper function checks whether a columns contains positive numbers between 0 and 1.
 #'
 #' @returns TRUE if values are all positive numeric between 0 and 1, FALSE if not
+#' @keywords internal
 is_valid_numrange <- function(col_values) {
   is.numeric(col_values) & all(col_values >= 0) & all(col_values <= 1) & all(!is.na(col_values))
 }
