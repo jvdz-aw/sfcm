@@ -92,3 +92,17 @@ test_that("is_valid_dataframe fails on invalid dataframe", {
   expect_false(is_valid_dataframe(test_rowwise_tibble))
 
 })
+
+
+test_that("check_na_cols detects columns containing NAs correctly", {
+
+  # Both columns contain NA
+  test_df <- data.frame(
+    species = c("A", NA),
+    a_macro = c(NA, 0.95)
+  )
+
+  # Should return a vector containing two times TRUE
+  expect_setequal(check_na_cols(test_df), c(TRUE, TRUE))
+
+})

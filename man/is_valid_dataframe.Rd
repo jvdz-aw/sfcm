@@ -7,6 +7,6 @@
 is_valid_dataframe(df)
 }
 \description{
-Internal function that checks whether a dataframe is a dataframe or a tibble
+Internal function that checks whether a dataframe is a dataframe or a tibble.
 }
 \keyword{internal}

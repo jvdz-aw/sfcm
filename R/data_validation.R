@@ -20,8 +20,7 @@ is_valid_numrange <- function(col_values) {
 
 #' Check dataframe
 #'
-#' Internal function that checks whether a dataframe is a dataframe or a tibble that doesn't
-#' contain missing values (NAs)
+#' Internal function that checks whether a dataframe is a dataframe or a tibble.
 #'
 #' @importFrom dplyr is_grouped_df
 #' @keywords internal
@@ -29,6 +28,17 @@ is_valid_dataframe <- function(df) {
   is.data.frame(df) && (
     !is_grouped_df(df) && !inherits(df, "rowwise_df")
   )
+}
+
+
+#' Check for NA in dataframe columns
+#'
+#' Internal function that checks whether dataframe columns contain NAs.
+#'
+#' @importFrom purrr map_lgl
+#' @keywords internal
+check_na_cols <- function(df) {
+  map_lgl(df, \(x) any(is.na(x)))
 }
 
 
