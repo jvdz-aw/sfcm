@@ -4,7 +4,7 @@
 #'
 #' @returns TRUE if values are all positive numeric and FALSE if not
 is_valid_numcol <- function(col_values) {
-  is.numeric(col_values) & all(col_values >= 0)
+  is.numeric(col_values) & all(col_values >= 0) & all(!is.na(col_values))
 }
 
 
@@ -14,7 +14,21 @@ is_valid_numcol <- function(col_values) {
 #'
 #' @returns TRUE if values are all positive numeric between 0 and 1, FALSE if not
 is_valid_numrange <- function(col_values) {
-  is.numeric(col_values) & all(col_values >= 0) & all(col_values <= 1)
+  is.numeric(col_values) & all(col_values >= 0) & all(col_values <= 1) & all(!is.na(col_values))
+}
+
+
+#' Check dataframe
+#'
+#' Internal function that checks whether a dataframe is a dataframe or a tibble that doesn't
+#' contain missing values (NAs)
+#'
+#' @importFrom dplyr is_grouped_df
+#' @keywords internal
+is_valid_dataframe <- function(df) {
+  is.data.frame(df) && (
+    !is_grouped_df(df) && !inherits(df, "rowwise_df")
+  )
 }
 
 
