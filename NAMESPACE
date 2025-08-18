@@ -3,6 +3,7 @@
 export(fcm)
 export(run_model)
 export(simulate_parameters)
+importFrom(dplyr,is_grouped_df)
 importFrom(dplyr,mutate)
 importFrom(dplyr,relocate)
 importFrom(dplyr,rename_with)

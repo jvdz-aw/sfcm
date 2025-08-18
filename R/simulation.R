@@ -128,6 +128,9 @@ get_allowed_dists <- function() {
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
 
+  # Validate input
+  validate_simulation_input(simulation_input)
+
   # Get allowed distributions per parameter
   allowed_distributions <- get_allowed_dists()
 

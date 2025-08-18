@@ -244,3 +244,49 @@ test_that("simulate_parameters runs without errors when using a subset of parame
   expect_true("p_col" %in% names(res_two_pars))
 
 })
+
+
+test_that("calling is_valid_dataframe on simulation input that is a rowwise or grouped tibble correctly returns an error", {
+
+  test_grp_tibble <- tibble::as_tibble(test_df) %>% dplyr::group_by("species")
+
+  expect_error(simulate_parameters(simulation_input = test_grp_tibble, parameters = c("flux"),
+                                   distributions = list("flux" = "poisson"),
+                                   n = 10), "Simulation input is not a dataframe or tibble.")
+
+  test_row_tibble <- tibble::as_tibble(test_df) %>% dplyr::rowwise()
+
+  expect_error(simulate_parameters(simulation_input = test_row_tibble, parameters = c("flux"),
+                                   distributions = list("flux" = "poisson"),
+                                   n = 10), "Simulation input is not a dataframe or tibble.")
+
+})
+
+
+test_that("calling check_na_cols on simulation input containing NAs correctly returns an error", {
+
+  # Define a test dataframe with two rows and some NAs
+  test_na_df <- data.frame(
+    species = c(NA, "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e_mean = c(4, 2),
+    turbs_e_sd = 0,
+    turbs_e_ref = 4.242641,
+    p_col_mean = c(0.5, 0.8),
+    p_col_sd = c(0.05, 0.1)
+  )
+
+  expect_error(simulate_parameters(simulation_input = test_na_df, parameters = c("flux"),
+                                   distributions = list("flux" = "poisson"),
+                                   n = 10), "The following columns in simulation input contain NAs: species")
+
+})
