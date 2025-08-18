@@ -128,6 +128,17 @@ get_allowed_dists <- function() {
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
 
+  # Perform checks on data
+  if (!is_valid_dataframe(simulation_input)) {
+    stop("Simulation input is not a dataframe or tibble.")
+  }
+
+  # Check for NAs in columns
+  na_cols <- check_na_cols(simulation_input)
+  if (any(na_cols)) {
+    stop(paste("The following columns in simulation input contain NAs:", names(simulation_input)[na_cols]))
+  }
+
   # Get allowed distributions per parameter
   allowed_distributions <- get_allowed_dists()
 
