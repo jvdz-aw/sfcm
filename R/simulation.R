@@ -108,6 +108,40 @@ get_allowed_dists <- function() {
 }
 
 
+#' Determine simulation output columns to be removed/renamed
+#'
+#' This internal functions determines which columns should be removed or renamed
+#' in simulation output based upon which parameters were selected for simulation.
+#'
+#' @returns A named list containing two string vectors with columns to be removed or renamed.
+#' @keywords internal
+get_cols_remove_rename <- function(parameters) {
+
+  # Get allowed distributions per parameter
+  allowed_distributions <- get_allowed_dists()
+
+  # Get all parametera and determine which weren't simulated
+  all_pars <- names(allowed_distributions)
+  unsim_pars <- all_pars[!all_pars %in% parameters]
+
+  # Determine columns to be removed
+  cols_to_remove <- c(paste0(all_pars, "_sd"), paste0(parameters, "_mean"))
+
+  # Determine columns to be renamed
+  if (length(unsim_pars) > 0) { # Only meaningful to include un-simulated parameters in output if they are actually there
+    cols_to_rename <- c(paste0(unsim_pars, "_mean"), paste0(parameters, "_samples"))
+  } else {
+    cols_to_rename <- c(paste0(parameters, "_samples"))
+  }
+
+  # Wrap in named list
+  list(
+    to_remove = cols_to_remove,
+    to_rename = cols_to_rename
+    )
+}
+
+
 #' Simulate parameters
 #'
 #' @description
@@ -118,7 +152,7 @@ get_allowed_dists <- function() {
 #' @param distributions A vector of distributions to use for generating random samples of a parameter.
 #' @param n The number of random samples to generate.
 #'
-#' @returns A dataframe with `n` rows containing simulated parameters.
+#' @returns A dataframe with \emph{n} rows containing simulated parameters.
 #' @importFrom purrr reduce
 #' @importFrom tidyr unnest
 #' @importFrom magrittr `%>%`
@@ -128,7 +162,7 @@ get_allowed_dists <- function() {
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
 
-  # Validate input
+  # Check whether the input dataframe is not a grouped or rowwise tibble
   validate_simulation_input(simulation_input)
 
   # Parameter and distributions vectors should have equal lengths, if not one of them is not set correctly
@@ -136,14 +170,14 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     stop("Parameters and distributions vectors have different lengths.")
   }
 
-  # Map parameter names to distributions
+  # Map parameter names to distributions by converting to named vector
   dists <- setNames(distributions, parameters)
 
-  # Get allowed distributions per parameter
-  allowed_distributions <- get_allowed_dists()
-
-  # Get sampling dispatch
-  sampling_dispatch <- get_sampling_dispatch()
+  # Retrieve some 'constants' from named lists
+  allowed_distributions <- get_allowed_dists() # Get allowed distributions per parameter
+  sampling_dispatch <- get_sampling_dispatch() # Get sampling dispatch
+  col_order <- names(model_input_data_spec())  # Get column order from data specification
+  cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
 
   # Perform checks on parameters
   for (parameter in parameters) {
@@ -163,7 +197,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     mutate(simulation_id = map(seq_len(nrow(simulation_input)), ~ seq_len(n)))
 
   # Simulate values using reduce instead of a for-loop for efficiency
-  simulation_input <- reduce(parameters, function(df, parameter) {
+  simulation_output <- reduce(parameters, function(df, parameter) {
 
     # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
     dist_name <- dists[[parameter]]
@@ -176,23 +210,12 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     sample_col <- paste0(parameter, "_samples")
     df[[sample_col]] <- samples
     df
-  }, .init = simulation_input)
-
-  # Define columns that need to be renamed or removed
-  pars_allowed <- names(allowed_distributions)
-  pars_not_to_sim <- pars_allowed[!pars_allowed %in% parameters]
-  cols_to_rename <- c(paste0(pars_not_to_sim, "_mean"), paste0(parameters, "_samples"))
-  cols_to_remove <- c(paste0(pars_allowed, "_sd"), paste0(parameters, "_mean"))
-
-  # Define a column order based upon the model input data specification
-  data_spec <- model_input_data_spec()
-  col_order <- names(data_spec)
-
-  # Unnest simulation_id and all parameter columns, then perform some renaming and clean up
-  simulation_input %>%
-    unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>%
-    select(!any_of(cols_to_remove)) %>%
-    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_rename)) %>%
+  }, .init = simulation_input) %>%
+    unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
+    select(!any_of(cols_to_remove_rename$to_remove)) %>%
+    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
+
+  return(simulation_output)
 }
 

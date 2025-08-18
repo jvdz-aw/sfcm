@@ -286,3 +286,20 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
                                    n = 10), "The following columns in simulation input contain NAs: species")
 
 })
+
+
+test_that("get_cols_remove_rename returns the expected columns to be removed or renamed", {
+
+  # Define list of parameters
+  parameters <- c("flux", "turbs_e")
+
+  # Define expected outcomes
+  exp_to_remove <- c("flux_mean", "flux_sd", "turbs_e_mean", "turbs_e_sd", "p_col_sd")
+  exp_to_rename <- c("flux_samples", "turbs_e_samples", "p_col_mean")
+
+  res <- get_cols_remove_rename(parameters)
+
+  expect_setequal(res$to_remove, exp_to_remove)
+  expect_setequal(res$to_rename, exp_to_rename)
+
+})
