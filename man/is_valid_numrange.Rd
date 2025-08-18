@@ -12,3 +12,4 @@ TRUE if values are all positive numeric between 0 and 1, FALSE if not
 \description{
 This helper function checks whether a columns contains positive numbers between 0 and 1.
 }
+\keyword{internal}

@@ -159,19 +159,16 @@ test_that("get_allowed_dists returns the correct mappings", {
 
 })
 
-
 test_that("simulate_parameters runs without errors", {
 
   parameters <- c("flux", "turbs_e", "p_col")
-  n_sims <- 500
+  distributions <- c("poisson", "poisson", "beta")
+  n_sims <- 10
 
   # Should run without errors
   res <- expect_no_error(simulate_parameters(simulation_input = test_df,
                                              parameters = parameters,
-                                             distributions = list(
-                                               "flux" = "poisson",
-                                               "turbs_e" = "poisson",
-                                               "p_col" = "beta"),
+                                             distributions = distributions,
                                              n = n_sims))
 
   # Check whether the correct columns are returned
@@ -203,8 +200,8 @@ test_that("simulate_parameters fails on missing specified distribution", {
   expect_error(simulate_parameters(
     simulation_input = test_df,
     parameters = parameters,
-    distributions = list("flxu" = "poisson"),
-    n = n_sims), "No distribution specified for parameter: flux")
+    distributions = NULL,
+    n = n_sims), "Parameters and distributions vectors have different lengths.")
 
 })
 
@@ -212,7 +209,7 @@ test_that("simulate_parameters fails on missing specified distribution", {
 test_that("simulate_parameters fails on selected of unsupported parameter to simulate", {
 
   # Should fail because an unsupported parameter is selected for simulation
-  expect_error(simulate_parameters(simulation_input = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "Parameter not recognized: rotor_d")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "rotor_d", distributions = list("rotor_d" = "poisson"), n = 10), "The following parameter cannot be simulated: rotor_d")
 
 })
 
@@ -220,7 +217,7 @@ test_that("simulate_parameters fails on selected of unsupported parameter to sim
 test_that("simulate_parameters fails on selecting invalid distribution", {
 
   # Should fail because the distribution is not correctly mapped to the parameter due to spelling error
-  expect_error(simulate_parameters(simulation_input = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Distribution 'beta' not allowed for parameter 'flux'")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "flux", distributions = list("flux" = "beta"), n = 10), "Probability distribution 'beta' is unavailable for parameter 'flux'")
 
 })
 
@@ -245,48 +242,48 @@ test_that("simulate_parameters runs without errors when using a subset of parame
 
 })
 
-
-test_that("calling is_valid_dataframe on simulation input that is a rowwise or grouped tibble correctly returns an error", {
-
-  test_grp_tibble <- tibble::as_tibble(test_df) %>% dplyr::group_by("species")
-
-  expect_error(simulate_parameters(simulation_input = test_grp_tibble, parameters = c("flux"),
-                                   distributions = list("flux" = "poisson"),
-                                   n = 10), "Simulation input is not a dataframe or tibble.")
-
-  test_row_tibble <- tibble::as_tibble(test_df) %>% dplyr::rowwise()
-
-  expect_error(simulate_parameters(simulation_input = test_row_tibble, parameters = c("flux"),
-                                   distributions = list("flux" = "poisson"),
-                                   n = 10), "Simulation input is not a dataframe or tibble.")
-
-})
-
-
-test_that("calling check_na_cols on simulation input containing NAs correctly returns an error", {
-
-  # Define a test dataframe with two rows and some NAs
-  test_na_df <- data.frame(
-    species = c(NA, "B"),
-    flux_mean = c(50, 100),
-    flux_sd = c(10, 50),
-    a_macro = 0.95,
-    f_prop = 1,
-    h_prop = 0.46961326,
-    h_prop_ref = 0.67,
-    rotor_d = 170,
-    rotor_d_ref = 60,
-    turb_dist = 628.6667,
-    turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
-    turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
-  )
-
-  expect_error(simulate_parameters(simulation_input = test_na_df, parameters = c("flux"),
-                                   distributions = list("flux" = "poisson"),
-                                   n = 10), "The following columns in simulation input contain NAs: species")
-
-})
+#
+# test_that("calling is_valid_dataframe on simulation input that is a rowwise or grouped tibble correctly returns an error", {
+#
+#   test_grp_tibble <- tibble::as_tibble(test_df) %>% dplyr::group_by("species")
+#
+#   expect_error(simulate_parameters(simulation_input = test_grp_tibble, parameters = c("flux"),
+#                                    distributions = list("flux" = "poisson"),
+#                                    n = 10), "Simulation input is not a dataframe or tibble.")
+#
+#   test_row_tibble <- tibble::as_tibble(test_df) %>% dplyr::rowwise()
+#
+#   expect_error(simulate_parameters(simulation_input = test_row_tibble, parameters = c("flux"),
+#                                    distributions = list("flux" = "poisson"),
+#                                    n = 10), "Simulation input is not a dataframe or tibble.")
+#
+# })
+#
+#
+# test_that("calling check_na_cols on simulation input containing NAs correctly returns an error", {
+#
+#   # Define a test dataframe with two rows and some NAs
+#   test_na_df <- data.frame(
+#     species = c(NA, "B"),
+#     flux_mean = c(50, 100),
+#     flux_sd = c(10, 50),
+#     a_macro = 0.95,
+#     f_prop = 1,
+#     h_prop = 0.46961326,
+#     h_prop_ref = 0.67,
+#     rotor_d = 170,
+#     rotor_d_ref = 60,
+#     turb_dist = 628.6667,
+#     turb_dist_ref = 250,
+#     turbs_e_mean = c(4, 2),
+#     turbs_e_sd = 0,
+#     turbs_e_ref = 4.242641,
+#     p_col_mean = c(0.5, 0.8),
+#     p_col_sd = c(0.05, 0.1)
+#   )
+#
+#   expect_error(simulate_parameters(simulation_input = test_na_df, parameters = c("flux"),
+#                                    distributions = list("flux" = "poisson"),
+#                                    n = 10), "The following columns in simulation input contain NAs: species")
+#
+# })

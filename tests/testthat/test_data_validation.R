@@ -51,9 +51,7 @@ test_that("validate_model_input runs successfully on simulation output", {
 
   model_input <- simulate_parameters(simulation_input = test_df,
                                      parameters = "flux",
-                                     distributions = list("flux" = "poisson",
-                                                          "turbs_e" = "poisson",
-                                                          "p_col" = "beta"),
+                                     distributions = "poisson",
                                      n = 5)
 
   expect_no_error(validate_model_input(model_input))

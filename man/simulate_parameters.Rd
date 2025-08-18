@@ -11,7 +11,7 @@ simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 
 \item{parameters}{A vector of parameters to simulate.}
 
-\item{distributions}{A named list containing mappings of parameters to distributions.}
+\item{distributions}{A vector of distributions to use for generating random samples of a parameter.}
 
 \item{n}{The number of random samples to generate.}
 }

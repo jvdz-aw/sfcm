@@ -115,7 +115,7 @@ get_allowed_dists <- function() {
 #'
 #' @param simulation_input A dataframe containing input parameters for the simulation.
 #' @param parameters A vector of parameters to simulate.
-#' @param distributions A named list containing mappings of parameters to distributions.
+#' @param distributions A vector of distributions to use for generating random samples of a parameter.
 #' @param n The number of random samples to generate.
 #'
 #' @returns A dataframe with `n` rows containing simulated parameters.
@@ -131,6 +131,14 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   # Validate input
   validate_simulation_input(simulation_input)
 
+  # Parameter and distributions vectors should have equal lengths, if not one of them is not set correctly
+  if (length(parameters) != length(distributions)) {
+    stop("Parameters and distributions vectors have different lengths.")
+  }
+
+  # Map parameter names to distributions
+  dists <- setNames(distributions, parameters)
+
   # Get allowed distributions per parameter
   allowed_distributions <- get_allowed_dists()
 
@@ -140,17 +148,13 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   # Perform checks on parameters
   for (parameter in parameters) {
 
-    if (!parameter %in% names(distributions)) {
-      stop(paste("No distribution specified for parameter:", parameter))
-    }
-
     if (!parameter %in% names(allowed_distributions)) {
-      stop(paste("Parameter not recognized:", parameter))
+      stop(paste("The following parameter cannot be simulated:", parameter))
     }
 
-    chosen_distribution <- distributions[[parameter]]
-    if (!chosen_distribution %in% allowed_distributions[[parameter]]) {
-      stop(paste0("Distribution '", chosen_distribution, "' not allowed for parameter '", parameter, "'"))
+    selected_distribution <- dists[[parameter]]
+    if (!selected_distribution %in% allowed_distributions[[parameter]]) {
+      stop(paste0("Probability distribution '", selected_distribution, "' is unavailable for parameter '", parameter, "'"))
     }
   }
 
@@ -162,7 +166,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   simulation_input <- reduce(parameters, function(df, parameter) {
 
     # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
-    dist_name <- distributions[[parameter]]
+    dist_name <- dists[[parameter]]
     dist_func <- sampling_dispatch[[dist_name]]
 
     # Generate random samples
