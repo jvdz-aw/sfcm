@@ -12,3 +12,4 @@ TRUE if values are all positive numeric and FALSE if not
 \description{
 Internal function that checks whether a column contains positive numbers.
 }
+\keyword{internal}
