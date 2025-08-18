@@ -177,7 +177,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   allowed_distributions <- get_allowed_dists() # Get allowed distributions per parameter
   sampling_dispatch <- get_sampling_dispatch() # Get sampling dispatch
   col_order <- names(model_input_data_spec())  # Get column order from data specification
-  cols <- get_cols_remove_rename(parameters)   # Determine
+  cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
 
   # Perform checks on parameters
   for (parameter in parameters) {
@@ -212,8 +212,8 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     df
   }, .init = simulation_input) %>%
     unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
-    select(!any_of(cols$to_remove)) %>%
-    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols$to_rename)) %>%
+    select(!any_of(cols_to_remove_rename$to_remove)) %>%
+    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
 
   return(simulation_output)
