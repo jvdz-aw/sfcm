@@ -1,34 +1,3 @@
-#' Determine simulation output columns to be removed/renamed
-#'
-#' This internal functions determines which columns should be removed or renamed
-#' in simulation output based upon which parameters were selected for simulation.
-#'
-#' @returns A named list containing two string vectors with columns to be removed or renamed.
-#' @keywords internal
-get_cols_remove_rename <- function(parameters) {
-
- # Get all parameters and determine which weren't simulated
-  all_pars <- c("flux", "turbs_e", "p_col")
-  unsim_pars <- all_pars[!all_pars %in% parameters]
-
-  # Determine columns to be removed
-  cols_to_remove <- c(paste0(all_pars, "_sd"), paste0(parameters, "_mean"))
-
-  # Determine columns to be renamed
-  if (length(unsim_pars) > 0) { # Only meaningful to include un-simulated parameters in output if they are actually there
-    cols_to_rename <- c(paste0(unsim_pars, "_mean"), paste0(parameters, "_samples"))
-  } else {
-    cols_to_rename <- c(paste0(parameters, "_samples"))
-  }
-
-  # Wrap in named list
-  list(
-    to_remove = cols_to_remove,
-    to_rename = cols_to_rename
-    )
-}
-
-
 #' Simulate parameters
 #'
 #' @description
