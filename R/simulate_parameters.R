@@ -67,8 +67,13 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     "p_col" = c("beta")
   ) 
 
+  # Define output column order
+  col_order <- c(
+    "flux", "a_macro", "f_prop", "h_prop", "h_prop_ref", "rotor_d", "rotor_d_ref", 
+    "turb_dist", "turb_dist_ref", "turbs_e", "turbs_e_ref", "p_col"
+  )
+
   sample_methods <- get_sample_methods() # Get sampling dispatch
-  col_order <- names(model_input_data_spec())  # Get column order from data specification
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
 
   # Perform checks on parameters
