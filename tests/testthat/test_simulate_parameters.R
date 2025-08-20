@@ -23,26 +23,6 @@ test_df <- data.frame(
   p_col_sd = c(0.05, 0.1)
 )
 
-
-
-test_that("get_allowed_dists returns the correct mappings", {
-
-  # Get allowed distributions
-  allowed <- get_allowed_dists()
-
-  # Should be a list
-  expect_type(allowed, "list")
-
-  # Check expected names
-  exp_names <- c("flux", "turbs_e", "p_col")
-
-  # Check element lengths
-  expect_equal(length(allowed[[exp_names[1]]]), 3)
-  expect_equal(length(allowed[[exp_names[2]]]), 1)
-  expect_equal(length(allowed[[exp_names[3]]]), 1)
-
-})
-
 test_that("simulate_parameters runs without errors", {
 
   parameters <- c("flux", "turbs_e", "p_col")

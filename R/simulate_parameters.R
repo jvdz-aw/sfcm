@@ -1,21 +1,3 @@
-
-#' Get allowed distributions
-#'
-#' This internal function returns a named list mapping parameter keywords to vectors
-#' of distributions. This list specifies which distributions are allowed
-#' for each parameter that can be sampled.
-#'
-#' @returns A named list mapping parameter keywords to distributions.
-#' @keywords internal
-get_allowed_dists <- function() {
-  list(
-    "flux" = c("normal", "poisson", "nbinom"),
-    "turbs_e" = c("poisson"),
-    "p_col" = c("beta")
-  )
-}
-
-
 #' Determine simulation output columns to be removed/renamed
 #'
 #' This internal functions determines which columns should be removed or renamed
@@ -25,11 +7,8 @@ get_allowed_dists <- function() {
 #' @keywords internal
 get_cols_remove_rename <- function(parameters) {
 
-  # Get allowed distributions per parameter
-  allowed_distributions <- get_allowed_dists()
-
-  # Get all parametera and determine which weren't simulated
-  all_pars <- names(allowed_distributions)
+ # Get all parameters and determine which weren't simulated
+  all_pars <- c("flux", "turbs_e", "p_col")
   unsim_pars <- all_pars[!all_pars %in% parameters]
 
   # Determine columns to be removed
@@ -81,8 +60,13 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   # Map parameter names to distributions by converting to named vector
   dists <- setNames(distributions, parameters)
 
-  # Retrieve some 'constants' from named lists
-  allowed_distributions <- get_allowed_dists() # Get allowed distributions per parameter
+  # Define which distributions are allowed for parameters that can be simulated
+  allowed_distributions <- list(
+    "flux" = c("normal", "poisson", "nbinom"),
+    "turbs_e" = c("poisson"),
+    "p_col" = c("beta")
+  ) 
+
   sample_methods <- get_sample_methods() # Get sampling dispatch
   col_order <- names(model_input_data_spec())  # Get column order from data specification
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
