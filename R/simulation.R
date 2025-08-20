@@ -152,7 +152,7 @@ get_cols_remove_rename <- function(parameters) {
 #' @param distributions A vector of distributions to use for generating random samples of a parameter.
 #' @param n The number of random samples to generate.
 #'
-#' @returns A dataframe with \emph{n} rows containing simulated parameters.
+#' @returns A `model_input` object with \emph{n} rows containing simulated parameters.
 #' @importFrom purrr reduce
 #' @importFrom tidyr unnest
 #' @importFrom magrittr `%>%`
@@ -216,6 +216,5 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
 
-  return(simulation_output)
+  model_input(simulation_output) # Converts simulation output to `model_input` object
 }
-

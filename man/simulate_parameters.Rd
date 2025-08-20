@@ -16,7 +16,7 @@ simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 \item{n}{The number of random samples to generate.}
 }
 \value{
-A dataframe with \emph{n} rows containing simulated parameters.
+A `model_input` object with \emph{n} rows containing simulated parameters.
 }
 \description{
 Generate random samples of a parameter using one of the available sampling functions.
