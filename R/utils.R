@@ -44,25 +44,6 @@ check_na_cols <- function(df) {
 }
 
 
-#' Validate simulation input
-#'
-#' Internal function that validates simulation input.
-#' @keywords internal
-validate_simulation_input <- function(simulation_input) {
-
-  # Check dataframe type
-  if (!is_valid_dataframe(simulation_input)) {
-    stop("Simulation input is not a dataframe or tibble.")
-  }
-
-  # Check for NAs in columns
-  na_cols <- check_na_cols(simulation_input)
-  if (any(na_cols)) {
-    stop(paste("The following columns in simulation input contain NAs:", names(simulation_input)[na_cols]))
-  }
-}
-
-
 #' Determine simulation output columns to be removed/renamed
 #'
 #' This internal functions determines which columns should be removed or renamed
