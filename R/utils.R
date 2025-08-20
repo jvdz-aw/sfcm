@@ -44,20 +44,34 @@ check_na_cols <- function(df) {
 }
 
 
-#' Validate simulation input
+#' Determine simulation output columns to be removed/renamed
 #'
-#' Internal function that validates simulation input.
+#' This internal functions determines which columns should be removed or renamed
+#' in simulation output based upon which parameters were selected for simulation.
+#'
+#' @returns A named list containing two string vectors with columns to be removed or renamed.
 #' @keywords internal
-validate_simulation_input <- function(simulation_input) {
+get_cols_remove_rename <- function(parameters) {
 
-  # Check dataframe type
-  if (!is_valid_dataframe(simulation_input)) {
-    stop("Simulation input is not a dataframe or tibble.")
+ # Get all parameters and determine which weren't simulated
+  all_pars <- c("flux", "turbs_e", "p_col")
+  unsim_pars <- all_pars[!all_pars %in% parameters]
+
+  # Determine columns to be removed
+  cols_to_remove <- c(paste0(all_pars, "_sd"), paste0(parameters, "_mean"))
+
+  # Determine columns to be renamed
+  if (length(unsim_pars) > 0) { # Only meaningful to include un-simulated parameters in output if they are actually there
+    cols_to_rename <- c(paste0(unsim_pars, "_mean"), paste0(parameters, "_samples"))
+  } else {
+    cols_to_rename <- c(paste0(parameters, "_samples"))
   }
 
-  # Check for NAs in columns
-  na_cols <- check_na_cols(simulation_input)
-  if (any(na_cols)) {
-    stop(paste("The following columns in simulation input contain NAs:", names(simulation_input)[na_cols]))
-  }
+  # Wrap in named list
+  list(
+    to_remove = cols_to_remove,
+    to_rename = cols_to_rename
+    )
 }
+
+
