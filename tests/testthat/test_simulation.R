@@ -303,3 +303,10 @@ test_that("get_cols_remove_rename returns the expected columns to be removed or 
   expect_setequal(res$to_rename, exp_to_rename)
 
 })
+
+
+test_that("simulate_parameters correctly returns a `model_input` object", {
+  parameters <- c("flux", "turbs_e")
+  distributions <- c("nbinom", "poisson")
+  expect_true(inherits(simulate_parameters(test_df, parameters, distributions), "model_input"))
+})
