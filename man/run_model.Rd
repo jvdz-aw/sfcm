@@ -7,7 +7,7 @@
 run_model(model_input)
 }
 \arguments{
-\item{model_input}{A dataframe containing input parameters for the flux collision model.}
+\item{model_input}{A `model_input` object containing input parameters for the flux collision model.}
 }
 \value{
 A dataframe similar to `model_input` that includes a column `mortality` containing bird mortality estimates.
