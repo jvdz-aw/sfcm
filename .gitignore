@@ -3,3 +3,6 @@
 
 # Ignore RStudio files
 .Rproj.user/
+
+# Ignore HTML preview
+README.html
