@@ -36,23 +36,24 @@
 #' 
 #' @importFrom dplyr mutate
 #' @importFrom purrr pmap_dbl
-#' 
+#' @importFrom rlang .data
+#'
 #' @export
 run_model <- function(model_input) {
   if (!inherits(model_input, "model_input")) {
     stop("Model input is not a `model_input` object.")
   } else {
     model_input %>%
-      mutate(n_collisions = pmap_dbl(list(flux = flux,
-                                          a_macro = a_macro,
-                                          h_prop = h_prop,
-                                          h_prop_ref = h_prop_ref,
-                                          rotor_d = rotor_d,
-                                          rotor_d_ref = rotor_d_ref,
-                                          turb_dist = turb_dist,
-                                          turb_dist_ref = turb_dist_ref,
-                                          turbs_e = turbs_e,
-                                          turbs_e_ref = turbs_e_ref,
-                                          p_col = p_col), fcm))
+      mutate(n_collisions = pmap_dbl(list(flux = .data$flux,
+                                          a_macro = .data$a_macro,
+                                          h_prop = .data$h_prop,
+                                          h_prop_ref = .data$h_prop_ref,
+                                          rotor_d = .data$rotor_d,
+                                          rotor_d_ref = .data$rotor_d_ref,
+                                          turb_dist = .data$turb_dist,
+                                          turb_dist_ref = .data$turb_dist_ref,
+                                          turbs_e = .data$turbs_e,
+                                          turbs_e_ref = .data$turbs_e_ref,
+                                          p_col = .data$p_col), fcm))
   }
 }
