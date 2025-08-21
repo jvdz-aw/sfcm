@@ -62,6 +62,7 @@
 #' @importFrom dplyr select rename_with relocate
 #' @importFrom stringr str_remove
 #' @importFrom tidyselect all_of any_of last_col
+#' @importFrom stats setNames
 #' 
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
@@ -133,7 +134,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     df[[sample_col]] <- samples
     df
   }, .init = simulation_input) %>%
-    unnest(cols = c(simulation_id, all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
+    unnest(cols = c("simulation_id", all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
     select(!any_of(cols_to_remove_rename$to_remove)) %>%
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
