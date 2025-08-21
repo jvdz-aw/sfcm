@@ -2,23 +2,23 @@
 % Please edit documentation in R/model_input.R
 \name{validate_model_input}
 \alias{validate_model_input}
-\title{Validate a `model_input` object}
+\title{Validate a \code{model_input} object}
 \usage{
 validate_model_input(x)
 }
 \arguments{
-\item{x}{A `model_input` object to validate.}
+\item{x}{A \code{model_input} object to validate.}
 }
 \value{
-A validated `model_input` object.
+A validated \code{model_input} object.
 }
 \description{
-Internal validation function for the `model_input` class. Ensures that the
+Internal validation function for the \code{model_input} class. Ensures that the
 object is a tibble and that it conforms to structural requirements, such
 as containing required columns or valid values.
 }
 \details{
-This function is typically called inside [model_input()] and should not
+This function is typically called inside \code{\link[=model_input]{model_input()}} and should not
 need to be called directly by users.
 }
 \keyword{internal}

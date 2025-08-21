@@ -32,3 +32,9 @@ test_that("run_model raises an error when not providing a model_input object as 
   exp_err_msg <- "Model input is not a `model_input` object."
   expect_error(run_model(test_df), exp_err_msg)
 })
+
+test_that("run_model produces the expected output dataframe", {
+  res <- run_model(model_input(test_df))
+  exp_colnames <- c(names(test_df), "n_collisions")
+  expect_setequal(names(res), exp_colnames)
+})

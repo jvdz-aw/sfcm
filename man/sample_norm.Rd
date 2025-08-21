@@ -7,14 +7,14 @@
 sample_norm(df, param, n)
 }
 \arguments{
-\item{df}{A dataframe containing columns `<param>_mean` and `<param>_sd`.}
+\item{df}{A dataframe containing columns \verb{<param>_mean} and \verb{<param>_sd}.}
 
 \item{param}{The base name of the parameter (e.g., "flux").}
 
 \item{n}{Number of samples to draw per row.}
 }
 \value{
-A list-column of numeric vectors of length `n`.
+A list-column of numeric vectors of length \code{n}.
 }
 \description{
 Internal function for generating random normal samples using parameters from a dataframe.

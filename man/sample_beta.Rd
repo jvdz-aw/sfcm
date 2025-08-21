@@ -7,14 +7,14 @@
 sample_beta(df, param, n)
 }
 \arguments{
-\item{df}{A dataframe containing columns `<param>_mean` and `<param>_sd`.}
+\item{df}{A dataframe containing columns \verb{<param>_mean} and \verb{<param>_sd}.}
 
 \item{param}{The base name of the parameter (e.g., "flux").}
 
 \item{n}{Number of samples to draw per row.}
 }
 \value{
-A vector of numbers of length `n`.
+A vector of numbers of length \code{n}.
 }
 \description{
 Internal function for generating random beta samples using parameters from a dataframe. Shape

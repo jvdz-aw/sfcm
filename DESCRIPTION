@@ -2,13 +2,24 @@ Package: sfcm
 Type: Package
 Title: Stochastic Flux Collision Model
 Version: 0.0.9000
-Authors@R: 
-    person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre"))
+Authors@R: c(
+    person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre")),
+    person("Gerben", "IJntema", , "g.ijntema@waardenburg.eco", role = "ctb")
+  )
 Description: Run stochastic Flux Collision Models that allow for uncertainty in parameters.
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Imports: 
-    lifecycle
+    dplyr,
+    magrittr,
+    purrr,
+    rlang,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
+Suggests: 
+    testthat

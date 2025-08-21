@@ -2,18 +2,18 @@
 % Please edit documentation in R/model_input.R
 \name{model_input}
 \alias{model_input}
-\title{Create a `model_input` tibble}
+\title{Create a \code{model_input} tibble}
 \usage{
 model_input(...)
 }
 \arguments{
-\item{...}{Named columns passed to [tibble::tibble()].}
+\item{...}{Named columns passed to \code{\link[tibble:tibble]{tibble::tibble()}}.}
 }
 \value{
-A `model_input` object (inherits from tibble).
+A \code{model_input} object (inherits from tibble).
 }
 \description{
-High-level helper for creating a `model_input` object. This function
+High-level helper for creating a \code{model_input} object. This function
 constructs a tibble from the provided columns and applies the class
 constructor and validation.
 }
@@ -31,8 +31,8 @@ df <- model_input(data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6))
-df
+  p_col = c(0.8, 0.6)))
+
 class(df)
 
 }

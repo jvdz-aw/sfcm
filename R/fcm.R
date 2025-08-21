@@ -56,7 +56,7 @@ fcm <- function(flux, a_macro,
                 rotor_d, rotor_d_ref,
                 turb_dist, turb_dist_ref,
                 turbs_e, turbs_e_ref,
-                p_col, ...) {
+                p_col) {
 
   # Flux at rotor height is given by (h / h_ref)
   flux_rotor_height <- (h_prop) / h_prop_ref

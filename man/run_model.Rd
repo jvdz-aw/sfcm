@@ -7,17 +7,17 @@
 run_model(model_input)
 }
 \arguments{
-\item{model_input}{A `model_input` object containing input parameters for the flux collision model.}
+\item{model_input}{A \code{model_input} object containing input parameters for the flux collision model.}
 }
 \value{
-A `model_input` object that includes a column `n_collisions` with the estimated number of bird collisions.
+A \code{model_input} object that includes a column \code{n_collisions} with the estimated number of bird collisions.
 }
 \description{
-Run the Flux Collision Model (FCM) to estimate bird collisions from input parameter values stored in `model_input` dataframes.
+Run the Flux Collision Model (FCM) to estimate bird collisions from input parameter values stored in \code{model_input} dataframes.
 }
 \details{
-This function is a wrapper of [fcm()] that provides an easy way of estimating the number of bird collisions for large sets
-of input parameter values. In addition, it checks whether the input parameter values are valid by through the use of the `model_input` 
+This function is a wrapper of \code{\link[=fcm]{fcm()}} that provides an easy way of estimating the number of bird collisions for large sets
+of input parameter values. In addition, it checks whether the input parameter values are valid by through the use of the \code{model_input}
 S3 class for its input.
 }
 \examples{
@@ -34,12 +34,12 @@ df <- model_input(data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6))
+  p_col = c(0.8, 0.6)))
 
 res <- run_model(df)
 print(res)
 
 }
 \seealso{
-[model_input()], [fcm()]
+\code{\link[=model_input]{model_input()}}, \code{\link[=fcm]{fcm()}}
 }
