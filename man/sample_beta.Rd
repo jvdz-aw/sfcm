@@ -9,7 +9,7 @@ sample_beta(df, param, n)
 \arguments{
 \item{df}{A dataframe containing columns `<param>_mean` and `<param>_sd`.}
 
-\item{param}{The base name of the parameter (e.g., "flux")}
+\item{param}{The base name of the parameter (e.g., "flux").}
 
 \item{n}{Number of samples to draw per row.}
 }
@@ -17,7 +17,7 @@ sample_beta(df, param, n)
 A vector of numbers of length `n`.
 }
 \description{
-Internal function to generate beta samples using parameters from a dataframe. Shape
+Internal function for generating random beta samples using parameters from a dataframe. Shape
 parameters are estimated from the mean and standard deviation.
 }
 \keyword{internal}

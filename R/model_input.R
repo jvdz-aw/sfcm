@@ -11,7 +11,7 @@
 #'
 #' @param x A [tibble::tibble] object containing the model input data.
 #'
-#' @return A `model_input` object (inherits from tibble).
+#' @returns A `model_input` object (inherits from tibble).
 #'
 #' @keywords internal
 new_model_input <- function(x = tibble::tibble()) {
@@ -33,7 +33,7 @@ new_model_input <- function(x = tibble::tibble()) {
 #'
 #' @param x A `model_input` object to validate.
 #'
-#' @return A validated `model_input` object.
+#' @returns A validated `model_input` object.
 #'
 #' @keywords internal
 validate_model_input <- function(x) {
@@ -82,7 +82,7 @@ validate_model_input <- function(x) {
 #'
 #' @param ... Named columns passed to [tibble::tibble()].
 #'
-#' @return A `model_input` object (inherits from tibble).
+#' @returns A `model_input` object (inherits from tibble).
 #'
 #' @examples
 #' df <- model_input(data.frame(

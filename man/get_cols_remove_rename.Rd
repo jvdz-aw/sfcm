@@ -6,6 +6,9 @@
 \usage{
 get_cols_remove_rename(parameters)
 }
+\arguments{
+\item{parameters}{A string vector containing the parameters selected for simulation.}
+}
 \value{
 A named list containing two string vectors with columns to be removed or renamed.
 }

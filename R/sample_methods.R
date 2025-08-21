@@ -1,13 +1,16 @@
-#' Sample from a normal distribution
+#' Sample from normal distribution
 #'
-#' Internal function to generate normal samples using parameters from a dataframe.
+#' @description
+#' Internal function for generating random normal samples using parameters from a dataframe.
 #'
 #' @param df A dataframe containing columns `<param>_mean` and `<param>_sd`.
-#' @param param The base name of the parameter (e.g., "flux")
+#' @param param The base name of the parameter (e.g., "flux").
 #' @param n Number of samples to draw per row.
 #'
 #' @returns A list-column of numeric vectors of length `n`.
+#' 
 #' @keywords internal
+#' 
 #' @importFrom purrr map2
 sample_norm <- function(df, param, n) {
   mu <- df[[paste0(param, "_mean")]]
@@ -18,14 +21,17 @@ sample_norm <- function(df, param, n) {
 
 #' Sample from Poisson distribution
 #'
-#' Internal function to generate Poisson samples using parameters from a dataframe.
+#' @description
+#' Internal function for generating random Poisson samples using parameters from a dataframe.
 #'
 #' @param df A dataframe containing column `<param>_mean` (`<param>_sd` is ignored).
-#' @param param The base name of the parameter (e.g., "flux")
+#' @param param The base name of the parameter (e.g., "flux").
 #' @param n Number of samples to draw per row.
 #'
 #' @returns A list-column of numeric vectors of length `n`.
+#' 
 #' @keywords internal
+#' 
 #' @importFrom purrr map
 sample_poisson <- function(df, param, n) {
   lambda <- df[[paste0(param, "_mean")]]
@@ -35,15 +41,18 @@ sample_poisson <- function(df, param, n) {
 
 #' Sample from beta distribution
 #'
-#' Internal function to generate beta samples using parameters from a dataframe. Shape
+#' @description
+#' Internal function for generating random beta samples using parameters from a dataframe. Shape
 #' parameters are estimated from the mean and standard deviation.
 #'
 #' @param df A dataframe containing columns `<param>_mean` and `<param>_sd`.
-#' @param param The base name of the parameter (e.g., "flux")
+#' @param param The base name of the parameter (e.g., "flux").
 #' @param n Number of samples to draw per row.
 #'
 #' @returns A vector of numbers of length `n`.
+#' 
 #' @keywords internal
+#' 
 #' @importFrom purrr map2
 sample_beta <- function(df, param, n) {
   mu <- df[[paste0(param, "_mean")]]
@@ -56,15 +65,18 @@ sample_beta <- function(df, param, n) {
 
 #' Sample from negative binomial distribution
 #'
-#' Internal function to generate negative binomial samples using parameters from
+#' @description
+#' Internal function for generating random negative binomial samples using parameters from
 #' a dataframe. The overdispersion parameter is estimated from the mean and standard deviation.
-
+#'
 #' @param df A dataframe containing columns `<param>_mean` and `<param>_sd`.
-#' @param param The base name of the parameter (e.g., "flux")
+#' @param param The base name of the parameter (e.g., "flux").
 #' @param n Number of samples to draw per row.
 #'
 #' @returns A vector of numbers of length `n`.
+#' 
 #' @keywords internal
+#' 
 #' @importFrom purrr map2
 sample_nbinom <- function(df, param, n) {
   mu <- df[[paste0(param, "_mean")]]
@@ -76,10 +88,12 @@ sample_nbinom <- function(df, param, n) {
 
 #' Get sampling methods
 #'
+#' @description
 #' This internal function returns a named list mapping available sampling method
 #' keywords to the sampling functions.
 #'
 #' @returns A named list mapping sampling method keywords to functions.
+#' 
 #' @keywords internal
 get_sample_methods <- function() {
   list(

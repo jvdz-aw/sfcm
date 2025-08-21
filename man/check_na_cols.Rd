@@ -6,6 +6,12 @@
 \usage{
 check_na_cols(df)
 }
+\arguments{
+\item{df}{A dataframe.}
+}
+\value{
+A vector of booleans (i.e., TRUE or FALSE) indicating whether a column contains NAs.
+}
 \description{
 Internal function that checks whether dataframe columns contain NAs.
 }

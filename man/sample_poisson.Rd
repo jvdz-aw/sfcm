@@ -9,7 +9,7 @@ sample_poisson(df, param, n)
 \arguments{
 \item{df}{A dataframe containing column `<param>_mean` (`<param>_sd` is ignored).}
 
-\item{param}{The base name of the parameter (e.g., "flux")}
+\item{param}{The base name of the parameter (e.g., "flux").}
 
 \item{n}{Number of samples to draw per row.}
 }
@@ -17,6 +17,6 @@ sample_poisson(df, param, n)
 A list-column of numeric vectors of length `n`.
 }
 \description{
-Internal function to generate Poisson samples using parameters from a dataframe.
+Internal function for generating random Poisson samples using parameters from a dataframe.
 }
 \keyword{internal}

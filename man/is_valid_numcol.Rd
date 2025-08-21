@@ -6,8 +6,11 @@
 \usage{
 is_valid_numcol(col_values)
 }
+\arguments{
+\item{col_values}{A vector.}
+}
 \value{
-TRUE if values are all positive numeric and FALSE if not
+TRUE if values are all positive numeric and FALSE if not.
 }
 \description{
 Internal function that checks whether a column contains positive numbers.

@@ -6,7 +6,13 @@
 \usage{
 is_valid_dataframe(df)
 }
+\arguments{
+\item{df}{A dataframe.}
+}
+\value{
+TRUE if a dataframe is a data.frame or tibble. FALSE if dataframe is a grouped-, or rowwise tibble.
+}
 \description{
-Internal function that checks whether a dataframe is a dataframe or a tibble.
+Internal function that checks whether a dataframe is a data.frame or a tibble.
 }
 \keyword{internal}
