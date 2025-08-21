@@ -1,0 +1,116 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# sfcm
+
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+The goal of **sfcm** is to provide tools for estimating bird collisions
+in planned wind farms using a stochastic Flux Collision Model, which
+allows for modelling uncertainty in parameter estimates via simulation.
+
+## Features
+
+- Incorporate uncertainty in parameter estimates in bird collision
+  estimates.
+- Simulate parameters from multiple probability distributions (normal,
+  Poisson, negative binomial and beta).
+- Lightweight and fast.
+
+## Installation
+
+You can install the development version of sfcm from
+[GitHub](https://github.com/jvdz-aw/sfcm) with:
+
+``` r
+# install.packages("pak")
+pak::pak("jvdz-aw/sfcm")
+```
+
+Or using:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("jvdz-aw/sfcm")
+```
+
+Alternatively, you can download the binary version you prefer and
+install it with:
+
+``` r
+install.packages("sfcm_0.1.0.tar.gz")
+```
+
+## Example
+
+This is an example of the basic workflow, which shows you how to create
+a test dataset, perform a simulation and estimate the number of bird
+collisions:
+
+``` r
+library(sfcm)
+
+# Create a test dataset
+test_df <- data.frame(
+  species = c("A", "B"),
+  flux_mean = c(50, 100),
+  flux_sd = c(10, 50),
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.6,
+  h_prop_ref = 0.67,
+  rotor_d = 170,
+  rotor_d_ref = 60,
+  turb_dist = 600,
+  turb_dist_ref = 250,
+  turbs_e_mean = c(4, 2),
+  turbs_e_sd = 0,
+  turbs_e_ref = 4,
+  p_col_mean = c(0.5, 0.8),
+  p_col_sd = c(0.05, 0.1)
+)
+
+# Define what parameters to simulate and which probability distributions to use for random sampling
+pars <- c("flux", "turbs_e", "p_col")
+dists <- c("nbinom", "poisson", "beta")
+
+# Perform simulation using n = 10 iterations
+sim_out <- simulate_parameters(test_df, parameters = pars, distributions = dists, n = 10)
+
+# The simulation output is a `model_input` S3 class object, which we use for implicit data validation
+class(sim_out)
+
+# Estimate bird collision using the wrapper function
+res <- run_model(sim_out)
+```
+
+## Supported parameters and distributions
+
+The following table shows which probability distributions are supported
+for each parameter that can be simulated.
+
+| Parameter | Supported probability distribution |
+|-----------|------------------------------------|
+| flux      | Normal, Poisson, negative binomial |
+| turbs_e   | Poisson                            |
+| p_col     | Beta                               |
+
+## Contributing
+
+Please open issues or submit pull requests on
+[GitHub](https://github.com/jvdz-aw/sfcm)
+
+## License
+
+This package is licensed under the MIT license. See the LICENSE file for
+details.
+
+## Acknowledgements
+
+The development of this R package is a collaboration between [Altenburg
+& Wymenga](https://www.altwym.nl/) and [Waardenburg
+Ecology](https://waardenburg.eco/).
