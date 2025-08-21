@@ -6,8 +6,11 @@
 \usage{
 is_valid_numrange(col_values)
 }
+\arguments{
+\item{col_values}{A vector.}
+}
 \value{
-TRUE if values are all positive numeric between 0 and 1, FALSE if not
+TRUE if values are all positive numeric between 0 and 1, FALSE if not.
 }
 \description{
 This helper function checks whether a columns contains positive numbers between 0 and 1.

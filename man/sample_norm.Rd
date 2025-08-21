@@ -2,14 +2,14 @@
 % Please edit documentation in R/sample_methods.R
 \name{sample_norm}
 \alias{sample_norm}
-\title{Sample from a normal distribution}
+\title{Sample from normal distribution}
 \usage{
 sample_norm(df, param, n)
 }
 \arguments{
 \item{df}{A dataframe containing columns `<param>_mean` and `<param>_sd`.}
 
-\item{param}{The base name of the parameter (e.g., "flux")}
+\item{param}{The base name of the parameter (e.g., "flux").}
 
 \item{n}{Number of samples to draw per row.}
 }
@@ -17,6 +17,6 @@ sample_norm(df, param, n)
 A list-column of numeric vectors of length `n`.
 }
 \description{
-Internal function to generate normal samples using parameters from a dataframe.
+Internal function for generating random normal samples using parameters from a dataframe.
 }
 \keyword{internal}

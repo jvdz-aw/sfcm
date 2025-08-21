@@ -7,11 +7,14 @@
 simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 }
 \arguments{
-\item{simulation_input}{A dataframe containing input parameters for the simulation.}
+\item{simulation_input}{A dataframe containing input parameters for the simulation. Parameters to 
+simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
+of the parameter to simulate.}
 
-\item{parameters}{A vector of parameters to simulate.}
+\item{parameters}{A string vector of parameters to simulate. Valid options are: `flux`, `turbs_e` or `p_col`.}
 
-\item{distributions}{A vector of distributions to use for generating random samples of a parameter.}
+\item{distributions}{A string vector of probability distributions to use for generating random samples of a 
+parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.}
 
 \item{n}{The number of random samples to generate.}
 }
@@ -19,5 +22,50 @@ simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 A `model_input` object with \emph{n} rows containing simulated parameters.
 }
 \description{
-Generate random samples of a parameter using one of the available sampling functions.
+Simulates new values of specified parameters by randomly sampling values from user-specified 
+probability distributions. The function uses a dataframe of parameter values 
+(`simulation_input`), a vector of parameter names to simulate (`parameters`), a vector of 
+probability distributions to apply (`distributions`), and the number of samples to 
+generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
+
+Simulation is currently only supported for the parameters `flux`, `turbs_e`, and `p_col`. 
+The normal, Poisson, negative binomial, and beta distributions are implemented, 
+but not all distributions are available for every parameter. See the \strong{Parameters} 
+section for details on which distributions can be used with each parameter.
+}
+\details{
+When multiple parameters are simulated it is recommended to generate a large enough number of random
+samples (e.g., \emph{n} > 10000) in order to prevent correlation among simulated parameters.
+}
+\examples{
+df <- data.frame(
+  species = c("A", "B"),
+  flux_mean = c(50, 100),
+  flux_sd = c(10, 50),
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.6,
+  h_prop_ref = 0.67,
+  rotor_d = 170,
+  rotor_d_ref = 60,
+  turb_dist = 600,
+  turb_dist_ref = 250,
+  turbs_e_mean = c(4, 2),
+  turbs_e_sd = 0,
+  turbs_e_ref = 4,
+  p_col_mean = c(0.5, 0.8),
+  p_col_sd = c(0.05, 0.1)
+)
+
+pars <- c("flux", "turbs_e", "p_col")
+dists <- c("nbinom", "poisson", "beta")
+
+sim_out <- simulate_parameters(df, parameters = pars, distributions = dists, n = 10)
+class(sim_out)
+
+res <- run_model(sim_out)
+
+}
+\seealso{
+[model_input()], [run_model()]
 }
