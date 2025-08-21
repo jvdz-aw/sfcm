@@ -16,8 +16,7 @@ fcm(
   turb_dist_ref,
   turbs_e,
   turbs_e_ref,
-  p_col,
-  ...
+  p_col
 )
 }
 \arguments{
