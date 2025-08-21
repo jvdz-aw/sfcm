@@ -7,30 +7,30 @@
 simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 }
 \arguments{
-\item{simulation_input}{A dataframe containing input parameters for the simulation. Parameters to 
-simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
+\item{simulation_input}{A dataframe containing input parameters for the simulation. Parameters to
+simulate should have the following column names: \verb{<par>_mean} and \verb{<par>_sd}, where \verb{<par>} is the name
 of the parameter to simulate.}
 
-\item{parameters}{A string vector of parameters to simulate. Valid options are: `flux`, `turbs_e` or `p_col`.}
+\item{parameters}{A string vector of parameters to simulate. Valid options are: \code{flux}, \code{turbs_e} or \code{p_col}.}
 
-\item{distributions}{A string vector of probability distributions to use for generating random samples of a 
-parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.}
+\item{distributions}{A string vector of probability distributions to use for generating random samples of a
+parameter. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
 
 \item{n}{The number of random samples to generate.}
 }
 \value{
-A `model_input` object with \emph{n} rows containing simulated parameters.
+A \code{model_input} object with \emph{n} rows containing simulated parameters.
 }
 \description{
-Simulates new values of specified parameters by randomly sampling values from user-specified 
-probability distributions. The function uses a dataframe of parameter values 
-(`simulation_input`), a vector of parameter names to simulate (`parameters`), a vector of 
-probability distributions to apply (`distributions`), and the number of samples to 
-generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
+Simulates new values of specified parameters by randomly sampling values from user-specified
+probability distributions. The function uses a dataframe of parameter values
+(\code{simulation_input}), a vector of parameter names to simulate (\code{parameters}), a vector of
+probability distributions to apply (\code{distributions}), and the number of samples to
+generate (\code{n}), returning a simulated \code{model_input} object that can be supplied to \code{\link[=run_model]{run_model()}}.
 
-Simulation is currently only supported for the parameters `flux`, `turbs_e`, and `p_col`. 
-The normal, Poisson, negative binomial, and beta distributions are implemented, 
-but not all distributions are available for every parameter. See the \strong{Parameters} 
+Simulation is currently only supported for the parameters \code{flux}, \code{turbs_e}, and \code{p_col}.
+The normal, Poisson, negative binomial, and beta distributions are implemented,
+but not all distributions are available for every parameter. See the \strong{Parameters}
 section for details on which distributions can be used with each parameter.
 }
 \details{
@@ -67,5 +67,5 @@ res <- run_model(sim_out)
 
 }
 \seealso{
-[model_input()], [run_model()]
+\code{\link[=model_input]{model_input()}}, \code{\link[=run_model]{run_model()}}
 }

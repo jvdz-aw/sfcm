@@ -25,7 +25,7 @@ fcm(
 
 \item{a_macro}{The proportion of birds avoiding the planned wind farm. Should be a positive numeric value between 0 and 1.}
 
-\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1 
+\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1
 (default = 1). We genrally recommend using the default value, unless users have strong reasons to believe only part of the estimated
 flux is through the planned wind farm.}
 
@@ -52,12 +52,12 @@ An estimate of the number of bird collisions expected in the planned wind farm.
 }
 \description{
 The Flux Collision Model (FCM) is an empirical collision risk model that uses knowledge of species (group)-specific collision
-probabilties estimated in existing wind farms to calculate collision rates for planned wind farms (Kleyheeg-Hartman et al. 2018). 
-In general, we recommend users to use [run_model()] since this comes with some built-in checks of the input parameter
-values and presents an easy-to-use interface for running the FCM on large sets of input parameters stored in `model_input` objects.
+probabilties estimated in existing wind farms to calculate collision rates for planned wind farms (Kleyheeg-Hartman et al. 2018).
+In general, we recommend users to use \code{\link[=run_model]{run_model()}} since this comes with some built-in checks of the input parameter
+values and presents an easy-to-use interface for running the FCM on large sets of input parameters stored in \code{model_input} objects.
 }
 \details{
-The implementation of the FCM in this R package is a slightly modified version of the original FCM. The original FCM had 
+The implementation of the FCM in this R package is a slightly modified version of the original FCM. The original FCM had
 additional parameters but could be further mathematically solved, resulting in the simplified FCM (with fewer parameters)
 implemented in this R package.
 }
@@ -81,5 +81,5 @@ print(n_collisions)
 Kleyheeg-Hartman et al. (2018). Predicting bird collisions with wind turbines: Comparison of the new empirical Flux Collision Model with the SOSS Band model. \emph{Ecological Modelling}, \strong{387}, 144-153.
 }
 \seealso{
-[model_input()], [run_model()]
+\code{\link[=model_input]{model_input()}}, \code{\link[=run_model]{run_model()}}
 }

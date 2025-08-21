@@ -2,23 +2,23 @@
 % Please edit documentation in R/model_input.R
 \name{new_model_input}
 \alias{new_model_input}
-\title{Construct a new `model_input` object}
+\title{Construct a new \code{model_input} object}
 \usage{
 new_model_input(x = tibble::tibble())
 }
 \arguments{
-\item{x}{A [tibble::tibble] object containing the model input data.}
+\item{x}{A \link[tibble:tibble]{tibble::tibble} object containing the model input data.}
 }
 \value{
-A `model_input` object (inherits from tibble).
+A \code{model_input} object (inherits from tibble).
 }
 \description{
-Internal low-level constructor for the `model_input` S3 class. A `model_input` is a
+Internal low-level constructor for the \code{model_input} S3 class. A \code{model_input} is a
 tibble with additional validation checks to ensure the data conforms to
 the expected structure for use in a model.
 }
 \details{
 This function should generally not be called directly by users.
-Instead, use [model_input()] which provides a user-friendly interface.
+Instead, use \code{\link[=model_input]{model_input()}} which provides a user-friendly interface.
 }
 \keyword{internal}
