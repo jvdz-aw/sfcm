@@ -34,7 +34,7 @@ df <- model_input(data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6))
+  p_col = c(0.8, 0.6)))
 
 res <- run_model(df)
 print(res)
