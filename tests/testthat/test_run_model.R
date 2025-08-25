@@ -1,0 +1,40 @@
+library(testthat)
+
+flux <- 17236.1111
+a_macro <- 0.6
+f_prop <- 1
+h_prop <- 0.46961326
+h_prop_ref <- 0.67
+rotor_d <- 170
+rotor_d_ref <- 60
+turb_dist <- 628.6667
+turb_dist_ref <- 250
+turbs_e <- 2
+turbs_e_ref <- 4.242641
+p_col <- 0.0017
+
+test_df <- data.frame(
+  flux = flux,
+  a_macro = a_macro,
+  f_prop = f_prop,
+  h_prop = h_prop,
+  h_prop_ref = h_prop_ref,
+  rotor_d = rotor_d,
+  rotor_d_ref = rotor_d_ref,
+  turb_dist = turb_dist,
+  turb_dist_ref = turb_dist_ref,
+  turbs_e = turbs_e,
+  turbs_e_ref = turbs_e_ref,
+  p_col = p_col
+)
+
+test_that("run_model raises an error when not providing a model_input object as input", {
+  exp_err_msg <- "Model input is not a `model_input` object."
+  expect_error(run_model(test_df), exp_err_msg)
+})
+
+test_that("run_model produces the expected output dataframe", {
+  res <- run_model(model_input(test_df))
+  exp_colnames <- c(names(test_df), "n_collisions")
+  expect_setequal(names(res), exp_colnames)
+})

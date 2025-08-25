@@ -1,11 +1,26 @@
-Package: fcm
+Package: sfcm
 Type: Package
-Title: Flux Collision Model
-Version: 0.0.9000
-Authors@R: 
-    person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre"))
-Description: Run Flux Collision Models.
-License: GPL (>= 3)
+Title: Stochastic Flux Collision Model
+Version: 0.1.0
+Authors@R: c(
+    person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre")),
+    person("Gerben", "IJntema", , "g.ijntema@waardenburg.eco", role = "ctb")
+  )
+Description: Tools for estimating bird collisions in planned wind farms using a stochastic
+Flux Collision Model that incorporates parameter uncertainty.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+Imports: 
+    dplyr,
+    magrittr,
+    purrr,
+    rlang,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
+Suggests: 
+    testthat
