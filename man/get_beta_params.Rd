@@ -26,9 +26,4 @@ beta distribution based on the method of moments, given a desired mean and stand
 The beta distribution is defined on the interval [0, 1]. For a valid distribution to
 exist, the variance (\eqn{\sigma^2}) must be less than \eqn{\mu(1 - \mu)}.
 }
-\examples{
-# Get parameters for a distribution centered at 0.7 with small spread
-get_beta_params(mu = 0.7, sigma = 0.05)
-
-}
 \keyword{internal}
