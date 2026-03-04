@@ -59,6 +59,29 @@ test_that("sample_poisson returns values with correct mean", {
   expect_equal(obs_sds, exp_sds, tolerance = 0.2)
 })
 
+test_that("get_beta_params returns the correct shape parameters given a mean and sd", {
+  # Set known inputs
+  target_mean <- 0.6
+  target_sd <- 0.1
+
+  # Calculate shape parameters
+  params <- get_beta_params(target_mean, target_sd)
+  a <- params$shape_a
+  b <- params$shape_b
+
+  # Calculate mean and SD 
+  calculated_mean <- a / (a + b)
+    
+  # Formula: SD = sqrt( (a*b) / ((a+b)^2 * (a+b+1)) )
+  calculated_sd <- sqrt((a * b) / ((a + b)^2 * (a + b + 1)))
+  
+  # Assertions
+  expect_equal(calculated_mean, target_mean)
+  expect_equal(calculated_sd, target_sd)
+  expect_type(params, "list")
+  expect_named(params, c("shape_a", "shape_b"))
+})
+
 test_that("sample_beta returns values with correct mean and sd", {
   samples <- sample_beta(test_df, "p_col", n = 1000)
 
