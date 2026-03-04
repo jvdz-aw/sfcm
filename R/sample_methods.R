@@ -54,8 +54,14 @@ validate_sample_method_input <- function(n, ...) {
 #' 
 #' @importFrom purrr map2
 sample_norm <- function(df, param, n) {
+  # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, mu = mu, sigma = sigma) # Arguments need to be explicitly named for validation to work
+
+  # Generate random normal samples
   map2(mu, sigma, ~rnorm(n, mean = .x, sd = .y))
 }
 
@@ -75,7 +81,13 @@ sample_norm <- function(df, param, n) {
 #' 
 #' @importFrom purrr map
 sample_poisson <- function(df, param, n) {
+  # Get parameter values
   lambda <- df[[paste0(param, "_mean")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, lambda = lambda)
+
+  # Generate random Poisson samples
   map(lambda, ~rpois(n, lambda = .x))
 }
 
@@ -138,9 +150,14 @@ get_beta_params <- function(mu, sigma) {
 #' 
 #' @importFrom purrr map2
 sample_beta <- function(df, param, n) {
+  # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
 
+  # Validate parameter values
+  validate_sample_method_input(n, mu = mu, sigma = sigma)
+
+  # Generate random beta samples
   map2(mu, sigma, \(x, y) {
     if (y == 0) { # Check for zero to prevent division by zero
       rep(x, n) # Return a vector of n values equal to the mean if SD equals zero
@@ -168,8 +185,14 @@ sample_beta <- function(df, param, n) {
 #' 
 #' @importFrom purrr map2
 sample_nbinom <- function(df, param, n) {
+  # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, mu = mu, sigma = sigma)
+
+  # Generate random negative binomial samples
   k <- mu^2 / (sigma^2 - mu)
   map2(k, mu, ~rnbinom(n, size = .x, mu = .y))
 }

@@ -49,6 +49,24 @@ test_that("validate_sample_method_input handles distribution parameters", {
   expect_error(validate_sample_method_input(n = 10, mu = c(1, 2, NA)), "Parameter 'mu' contains NA or NaN")
 })
 
+test_that("test integration of validate_sample_method_input into sample method functions", {
+  # sample_norm
+  expect_silent(sample_norm(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 5)), "flux", n = 10)) # Valid parameters
+  expect_error(sample_norm(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+
+  # sample_poisson
+  expect_silent(sample_poisson(data.frame(flux_mean = c(10, 10)), "flux", n = 10)) # Valid parameters
+  expect_error(sample_poisson(data.frame(flux_mean = c(10, NA)), "flux", n = 10), "Parameter 'lambda' contains NA or NaN") # Invalid parameters
+
+  # sample_beta
+  expect_silent(sample_beta(data.frame(p_col_mean = c(0.1, 0.1), p_col_sd = c(0.01, 0.01)), "p_col", n = 10)) # Valid parameters
+  expect_error(sample_beta(data.frame(p_col_mean = c(0.1, NA), p_col_sd = c(NA, 0.01)), "p_col", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+
+  # sample_nbinom
+  expect_silent(sample_nbinom(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 5)), "flux", n = 10)) # Valid parameters
+  expect_error(sample_nbinom(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+})
+
 test_that("sample_norm returns values with correct mean and sd", {
   samples <- sample_norm(test_df, "flux", n = 1000)
 
