@@ -133,10 +133,6 @@ sample_poisson <- function(df, param, n) {
 #'   \item \code{shape_a}: The first shape parameter (\eqn{\alpha}).
 #'   \item \code{shape_b}: The second shape parameter (\eqn{\beta}).
 #' }
-#'
-#' @examples
-#' # Get parameters for a distribution centered at 0.7 with small spread
-#' get_beta_params(mu = 0.7, sigma = 0.05)
 #' 
 #' @keywords internal
 get_beta_params <- function(mu, sigma) {
@@ -172,6 +168,7 @@ get_beta_params <- function(mu, sigma) {
 #' @keywords internal
 #' 
 #' @importFrom purrr map2
+#' @importFrom stats rbeta
 sample_beta <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
