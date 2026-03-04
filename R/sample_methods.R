@@ -49,7 +49,7 @@ sample_poisson <- function(df, param, n) {
 #' @param sigma The desired standard deviation.
 #' 
 #' @details
-#' The beta distribution is defined on the interval [0, 1]. For a valid distribution to 
+#' The beta distribution is defined on the interval \[0, 1]. For a valid distribution to 
 #' exist, the variance (\eqn{\sigma^2}) must be less than \eqn{\mu(1 - \mu)}. 
 #' 
 #' @returns A named list containing:
