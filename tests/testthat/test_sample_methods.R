@@ -71,6 +71,21 @@ test_that("sample_norm correctly handles invalid 'df' argument", {
   expect_error(sample_norm(as.matrix(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5))), "flux", n = 10), "Parameter 'df' must be a data.frame or tibble.")
 })
 
+test_that("sample_norm correctly handles negative and zero standard deviation", {
+  expect_error(sample_norm(data.frame(flux_mean = c(10, 10), flux_sd = c(5, -5)), "flux", n = 10), "Standard deviation must be non-negative.")
+  expect_warning(sample_norm(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 0)), "flux", n = 10), "Standard deviation equal to zero for some entries. Function will default to return the mean instead of random sampling.")
+})
+
+test_that("sample_poisson handles invalid lambda correctly", {
+    expect_error(sample_poisson(data.frame(flux_mean = c(10, -2)), "flux", n = 10), "Lambda must be greater than zero.")
+})
+
+test_that("sample_nbinom handles invalid mean, sd and dispersion parameter values", {
+  expect_error(sample_nbinom(data.frame(flux_mean = c(10, -10), flux_sd = c(100, 100)), "flux", n = 10), "Mean must be greater than zero.")
+  expect_error(sample_nbinom(data.frame(flux_mean = c(10, 10), flux_sd = c(-100, 100)), "flux", n = 10), "Standard deviation must be greater than zero.")
+  expect_error(sample_nbinom(data.frame(flux_mean = c(10000, 10000), flux_sd = c(10, 10)), "flux", n = 10), "Dispersion must be greater than zero.")
+})
+
 test_that("sample_norm returns values with correct mean and sd", {
   samples <- sample_norm(test_df, "flux", n = 1000)
 

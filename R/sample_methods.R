@@ -67,6 +67,13 @@ sample_norm <- function(df, param, n) {
   # Validate parameter values
   validate_sample_method_input(n, means = means, sds = sds) # Arguments need to be explicitly named for validation to work
 
+  # Check whether standard deviation is greater than zero
+  if (any(sds < 0)) {
+    stop("Standard deviation must be non-negative.")
+  } else if (any(sds == 0)) {
+    warning("Standard deviation equal to zero for some entries. Function will default to return the mean instead of random sampling.")
+  }
+
   # Generate random normal samples
   map2(means, sds, ~rnorm(n, mean = .x, sd = .y))
 }
@@ -97,6 +104,11 @@ sample_poisson <- function(df, param, n) {
 
   # Validate parameter values
   validate_sample_method_input(n, lambdas = lambdas)
+
+  # Check whether lambda is greater than zero
+  if (any(lambdas < 0)) {
+    stop("Lambda must be greater than zero.")
+  }
 
   # Generate random Poisson samples
   map(lambdas, ~rpois(n, lambda = .x))
@@ -213,8 +225,24 @@ sample_nbinom <- function(df, param, n) {
   # Validate parameter values
   validate_sample_method_input(n, means = means, sds = sds)
 
-  # Generate random negative binomial samples
+  # Check whether mean is greater than zero
+  if (any(means <= 0)) {
+    stop("Mean must be greater than zero.")
+  }
+
+  # Check whether sd is greater than zero (note that this is different from sample_norm)
+  if (any(sds <= 0)) {
+    stop("Standard deviation must be greater than zero.")
+  }
+
+  # Calculate dispersion parameter values
   ks <- means^2 / (sds^2 - means)
+
+  # Check whether dispersion is greater than zero
+  if (any(ks <= 0)) {
+    stop("Dispersion must be greater than zero.")
+  }
+  # Generate random negative binomial samples
   map2(ks, means, ~rnbinom(n, size = .x, mu = .y))
 }
 
