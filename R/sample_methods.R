@@ -61,14 +61,14 @@ sample_norm <- function(df, param, n) {
   }
 
   # Get parameter values
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
 
   # Validate parameter values
-  validate_sample_method_input(n, mu = mu, sigma = sigma) # Arguments need to be explicitly named for validation to work
+  validate_sample_method_input(n, means = means, sds = sds) # Arguments need to be explicitly named for validation to work
 
   # Generate random normal samples
-  map2(mu, sigma, ~rnorm(n, mean = .x, sd = .y))
+  map2(means, sds, ~rnorm(n, mean = .x, sd = .y))
 }
 
 
@@ -93,13 +93,13 @@ sample_poisson <- function(df, param, n) {
   }
 
   # Get parameter values
-  lambda <- df[[paste0(param, "_mean")]]
+  lambdas <- df[[paste0(param, "_mean")]]
 
   # Validate parameter values
-  validate_sample_method_input(n, lambda = lambda)
+  validate_sample_method_input(n, lambdas = lambdas)
 
   # Generate random Poisson samples
-  map(lambda, ~rpois(n, lambda = .x))
+  map(lambdas, ~rpois(n, lambda = .x))
 }
 
 
@@ -167,14 +167,14 @@ sample_beta <- function(df, param, n) {
   }
 
   # Get parameter values
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
 
   # Validate parameter values
-  validate_sample_method_input(n, mu = mu, sigma = sigma)
+  validate_sample_method_input(n, means = means, sds = sds)
 
   # Generate random beta samples
-  map2(mu, sigma, \(x, y) {
+  map2(means, sds, \(x, y) {
     if (y == 0) { # Check for zero to prevent division by zero
       rep(x, n) # Return a vector of n values equal to the mean if SD equals zero
     } else {
@@ -207,15 +207,15 @@ sample_nbinom <- function(df, param, n) {
   }
 
   # Get parameter values
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
 
   # Validate parameter values
-  validate_sample_method_input(n, mu = mu, sigma = sigma)
+  validate_sample_method_input(n, means = means, sds = sds)
 
   # Generate random negative binomial samples
-  k <- mu^2 / (sigma^2 - mu)
-  map2(k, mu, ~rnbinom(n, size = .x, mu = .y))
+  ks <- means^2 / (sds^2 - means)
+  map2(ks, means, ~rnbinom(n, size = .x, mu = .y))
 }
 
 

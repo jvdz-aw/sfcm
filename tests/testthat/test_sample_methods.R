@@ -35,36 +35,36 @@ test_that("validate_sample_method_input handles 'n' correctly", {
 
 test_that("validate_sample_method_input handles distribution parameters", {
   # Valid parameters (scalars and vectors)
-  expect_silent(validate_sample_method_input(n = 10, mu = 0, sigma = 1))
+  expect_silent(validate_sample_method_input(n = 10, means = 0, sds = 1))
   expect_silent(validate_sample_method_input(n = 5, shape = c(0.1, 0.5, 0.9)))
   
   # Invalid parameter types
-  expect_error(validate_sample_method_input(n = 10, mu = "zero"), "Parameter 'mu' must be numeric")
+  expect_error(validate_sample_method_input(n = 10, means = "zero"), "Parameter 'means' must be numeric")
   
   # Non-finite values
-  expect_error(validate_sample_method_input(n = 10, sigma = Inf), "Parameter 'sigma' must be finite")
-  expect_error(validate_sample_method_input(n = 10, lambda = NaN), "Parameter 'lambda' contains NA or NaN")
+  expect_error(validate_sample_method_input(n = 10, sds = Inf), "Parameter 'sds' must be finite")
+  expect_error(validate_sample_method_input(n = 10, lambdas = NaN), "Parameter 'lambdas' contains NA or NaN")
   
   # Vector with one bad value
-  expect_error(validate_sample_method_input(n = 10, mu = c(1, 2, NA)), "Parameter 'mu' contains NA or NaN")
+  expect_error(validate_sample_method_input(n = 10, means = c(1, 2, NA)), "Parameter 'means' contains NA or NaN")
 })
 
 test_that("test integration of validate_sample_method_input into sample method functions", {
   # sample_norm
   expect_silent(sample_norm(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 5)), "flux", n = 10)) # Valid parameters
-  expect_error(sample_norm(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+  expect_error(sample_norm(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'means' contains NA or NaN") # Invalid parameters
 
   # sample_poisson
   expect_silent(sample_poisson(data.frame(flux_mean = c(10, 10)), "flux", n = 10)) # Valid parameters
-  expect_error(sample_poisson(data.frame(flux_mean = c(10, NA)), "flux", n = 10), "Parameter 'lambda' contains NA or NaN") # Invalid parameters
+  expect_error(sample_poisson(data.frame(flux_mean = c(10, NA)), "flux", n = 10), "Parameter 'lambdas' contains NA or NaN") # Invalid parameters
 
   # sample_beta
   expect_silent(sample_beta(data.frame(p_col_mean = c(0.1, 0.1), p_col_sd = c(0.01, 0.01)), "p_col", n = 10)) # Valid parameters
-  expect_error(sample_beta(data.frame(p_col_mean = c(0.1, NA), p_col_sd = c(NA, 0.01)), "p_col", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+  expect_error(sample_beta(data.frame(p_col_mean = c(0.1, NA), p_col_sd = c(NA, 0.01)), "p_col", n = 10), "Parameter 'means' contains NA or NaN") # Invalid parameters
 
   # sample_nbinom
   expect_silent(sample_nbinom(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 5)), "flux", n = 10)) # Valid parameters
-  expect_error(sample_nbinom(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
+  expect_error(sample_nbinom(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'means' contains NA or NaN") # Invalid parameters
 })
 
 test_that("sample_norm correctly handles invalid 'df' argument", {
