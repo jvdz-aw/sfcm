@@ -67,6 +67,10 @@ test_that("test integration of validate_sample_method_input into sample method f
   expect_error(sample_nbinom(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5)), "flux", n = 10), "Parameter 'mu' contains NA or NaN") # Invalid parameters
 })
 
+test_that("sample_norm correctly handles invalid 'df' argument", {
+  expect_error(sample_norm(as.matrix(data.frame(flux_mean = c(10, NA), flux_sd = c(5, 5))), "flux", n = 10), "Parameter 'df' must be a data.frame or tibble.")
+})
+
 test_that("sample_norm returns values with correct mean and sd", {
   samples <- sample_norm(test_df, "flux", n = 1000)
 

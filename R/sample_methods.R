@@ -54,6 +54,12 @@ validate_sample_method_input <- function(n, ...) {
 #' 
 #' @importFrom purrr map2
 sample_norm <- function(df, param, n) {
+
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
   # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
@@ -81,6 +87,11 @@ sample_norm <- function(df, param, n) {
 #' 
 #' @importFrom purrr map
 sample_poisson <- function(df, param, n) {
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
   # Get parameter values
   lambda <- df[[paste0(param, "_mean")]]
 
@@ -150,6 +161,11 @@ get_beta_params <- function(mu, sigma) {
 #' 
 #' @importFrom purrr map2
 sample_beta <- function(df, param, n) {
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
   # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
@@ -185,6 +201,11 @@ sample_beta <- function(df, param, n) {
 #' 
 #' @importFrom purrr map2
 sample_nbinom <- function(df, param, n) {
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
   # Get parameter values
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
