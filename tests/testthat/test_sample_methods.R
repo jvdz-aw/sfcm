@@ -21,6 +21,34 @@ test_df <- data.frame(
   p_col_sd = c(0.05, 0.1)
 )
 
+test_that("validate_sample_method_input handles 'n' correctly", {
+# Valid n should not throw error
+  expect_silent(validate_sample_method_input(n = 10))
+  expect_silent(validate_sample_method_input(n = 0))
+  
+  # Invalid n should throw errors
+  expect_error(validate_sample_method_input(n = -1), "'n' must be a single non-negative integer")
+  expect_error(validate_sample_method_input(n = 10.5), "'n' must be a single non-negative integer")
+  expect_error(validate_sample_method_input(n = c(10, 20)), "'n' must be a single non-negative integer")
+  expect_error(validate_sample_method_input(n = NA), "'n' must be a single non-negative integer")
+})
+
+test_that("validate_sample_method_input handles distribution parameters", {
+  # Valid parameters (scalars and vectors)
+  expect_silent(validate_sample_method_input(n = 10, mu = 0, sigma = 1))
+  expect_silent(validate_sample_method_input(n = 5, shape = c(0.1, 0.5, 0.9)))
+  
+  # Invalid parameter types
+  expect_error(validate_sample_method_input(n = 10, mu = "zero"), "Parameter 'mu' must be numeric")
+  
+  # Non-finite values
+  expect_error(validate_sample_method_input(n = 10, sigma = Inf), "Parameter 'sigma' must be finite")
+  expect_error(validate_sample_method_input(n = 10, lambda = NaN), "Parameter 'lambda' contains NA or NaN")
+  
+  # Vector with one bad value
+  expect_error(validate_sample_method_input(n = 10, mu = c(1, 2, NA)), "Parameter 'mu' contains NA or NaN")
+})
+
 test_that("sample_norm returns values with correct mean and sd", {
   samples <- sample_norm(test_df, "flux", n = 1000)
 

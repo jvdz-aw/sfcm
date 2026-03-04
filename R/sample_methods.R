@@ -1,3 +1,44 @@
+#' Validate sample method inputs
+#' 
+#' @description
+#' Internal function for validating sample method inputs.
+#' 
+#' @param n Number of samples to draw per row.
+#' @param ... Vector of named parameter values representing the distribution arguments (e.g., `mu`).
+#' 
+#' @returns Invisible `NULL`. Function is called for its side effect of throwing an error if validation fails.
+#' 
+#' @keywords internal
+validate_sample_method_input <- function(n, ...) {
+  # Validate n (sample size)
+  if (length(n) != 1 || !is.numeric(n) || n < 0 || n %% 1 != 0) {
+    stop("'n' must be a single non-negative integer.")
+  }
+
+  # Capture other parameters
+  params <- list(...)
+  
+  for (name in names(params)) {
+    val <- params[[name]]
+    
+    # Check for NA/NaN
+    if (any(is.na(val))) {
+      stop(sprintf("Parameter '%s' contains NA or NaN values.", name))
+    }
+    
+    # Check for non-numeric types
+    if (!is.numeric(val)) {
+      stop(sprintf("Parameter '%s' must be numeric.", name))
+    }
+    
+    # Check for Infinite values
+    if (any(!is.finite(val))) {
+      stop(sprintf("Parameter '%s' must be finite (no Inf).", name))
+    }
+  }
+}
+
+
 #' Sample from normal distribution
 #'
 #' @description
