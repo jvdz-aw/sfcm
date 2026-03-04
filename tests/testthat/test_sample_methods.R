@@ -78,6 +78,17 @@ test_that("sample_beta returns values with correct mean and sd", {
   expect_equal(obs_sds, exp_sds, tolerance = 0.2)
 })
 
+test_that("sample_beta correctly a vector of values equal to the man when sd is zero", {
+  par_mean <- 0.01
+  par_sd <- 0
+  reps <- 5
+
+  obs_samples <- sample_beta(data.frame(p_col_mean = par_mean, p_col_sd = par_sd), "p_col", n = reps)[[1]]
+  exp_samples <- rep(par_mean, reps)
+
+  expect_equal(obs_samples, exp_samples)
+})
+
 test_that("sample_nbinom returns values with correct mean and sd", {
   samples <- sample_nbinom(test_df, "flux", n = 1000)
 

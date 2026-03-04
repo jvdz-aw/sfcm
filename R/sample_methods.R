@@ -57,9 +57,16 @@ sample_poisson <- function(df, param, n) {
 sample_beta <- function(df, param, n) {
   mu <- df[[paste0(param, "_mean")]]
   sigma <- df[[paste0(param, "_sd")]]
-  shape1 <- mu * ((mu * (1 - mu) / sigma^2) - 1)
-  shape2 <- ((1 - mu) * (mu * (1 - mu) / sigma^2) - 1)
-  map2(shape1, shape2, ~rbeta(n, shape1 = .x, shape2 = .y))
+
+  map2(mu, sigma, \(x, y) {
+    if (y == 0) { # Check for zero to prevent division by zero
+      rep(mu, n) # Return a vector of n values equal to the mean if SD equals zero
+    } else {
+      shape1 <- x * ((x * (1 - x) / y^2) - 1)
+      shape2 <- ((1 - x) * (x * (1 - x) / y^2) - 1)
+      rbeta(n, shape1 = shape1, shape2 = shape2)
+    }
+  })
 }
 
 
