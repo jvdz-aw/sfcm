@@ -1,3 +1,44 @@
+#' Validate sample method inputs
+#' 
+#' @description
+#' Internal function for validating sample method inputs.
+#' 
+#' @param n Number of samples to draw per row.
+#' @param ... Vector of named parameter values representing the distribution arguments (e.g., `mu`).
+#' 
+#' @returns Invisible `NULL`. Function is called for its side effect of throwing an error if validation fails.
+#' 
+#' @keywords internal
+validate_sample_method_input <- function(n, ...) {
+  # Validate n (sample size)
+  if (length(n) != 1 || !is.numeric(n) || n < 0 || n %% 1 != 0) {
+    stop("'n' must be a single non-negative integer.")
+  }
+
+  # Capture other parameters
+  params <- list(...)
+  
+  for (name in names(params)) {
+    val <- params[[name]]
+    
+    # Check for NA/NaN
+    if (any(is.na(val))) {
+      stop(sprintf("Parameter '%s' contains NA or NaN values.", name))
+    }
+    
+    # Check for non-numeric types
+    if (!is.numeric(val)) {
+      stop(sprintf("Parameter '%s' must be numeric.", name))
+    }
+    
+    # Check for Infinite values
+    if (any(!is.finite(val))) {
+      stop(sprintf("Parameter '%s' must be finite (no Inf).", name))
+    }
+  }
+}
+
+
 #' Sample from normal distribution
 #'
 #' @description
@@ -13,9 +54,28 @@
 #' 
 #' @importFrom purrr map2
 sample_norm <- function(df, param, n) {
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
-  map2(mu, sigma, ~rnorm(n, mean = .x, sd = .y))
+
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
+  # Get parameter values
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, means = means, sds = sds) # Arguments need to be explicitly named for validation to work
+
+  # Check whether standard deviation is greater than zero
+  if (any(sds < 0)) {
+    stop("Standard deviation must be non-negative.")
+  } else if (any(sds == 0)) {
+    warning("Standard deviation equal to zero for some entries. Function will default to return the mean instead of random sampling.")
+  }
+
+  # Generate random normal samples
+  map2(means, sds, ~rnorm(n, mean = .x, sd = .y))
 }
 
 
@@ -34,8 +94,62 @@ sample_norm <- function(df, param, n) {
 #' 
 #' @importFrom purrr map
 sample_poisson <- function(df, param, n) {
-  lambda <- df[[paste0(param, "_mean")]]
-  map(lambda, ~rpois(n, lambda = .x))
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
+  # Get parameter values
+  lambdas <- df[[paste0(param, "_mean")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, lambdas = lambdas)
+
+  # Check whether lambda is greater than zero
+  if (any(lambdas < 0)) {
+    stop("Lambda must be greater than zero.")
+  }
+
+  # Generate random Poisson samples
+  map(lambdas, ~rpois(n, lambda = .x))
+}
+
+
+#' Estimate beta distribution parameters from mean and standard deviation
+#' 
+#' @description
+#' Internal function that calculates the shape parameters (\eqn{\alpha} and \eqn{\beta}) for a
+#' beta distribution based on the method of moments, given a desired mean and standard deviation.
+#' 
+#' @param mu The desired mean of the distribution. Must be between 0 and 1.
+#' @param sigma The desired standard deviation.
+#' 
+#' @details
+#' The beta distribution is defined on the interval \[0, 1]. For a valid distribution to 
+#' exist, the variance (\eqn{\sigma^2}) must be less than \eqn{\mu(1 - \mu)}. 
+#' 
+#' @returns A named list containing:
+#' \itemize{
+#'   \item \code{shape_a}: The first shape parameter (\eqn{\alpha}).
+#'   \item \code{shape_b}: The second shape parameter (\eqn{\beta}).
+#' }
+#' 
+#' @keywords internal
+get_beta_params <- function(mu, sigma) {
+  # Calculate variance
+  sigma2 <- sigma^2
+
+  # Variance must be less than mean * (1 - mean)
+  if (sigma2 >= mu * (1 - mu)) {
+    stop("The provided SD is too high for the given mean to form a valid beta distribution.")
+  }
+
+  # Calculate shape parameters
+  term <- ((mu * (1 - mu) / sigma2) - 1) # Common term
+  shape_a <- mu * term
+  shape_b <- (1 - mu) * term
+
+  return(list(shape_a = shape_a, shape_b = shape_b))
 }
 
 
@@ -54,12 +168,29 @@ sample_poisson <- function(df, param, n) {
 #' @keywords internal
 #' 
 #' @importFrom purrr map2
+#' @importFrom stats rbeta
 sample_beta <- function(df, param, n) {
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
-  shape1 <- mu * ((mu * (1 - mu) / sigma^2) - 1)
-  shape2 <- ((1 - mu) * (mu * (1 - mu) / sigma^2) - 1)
-  map2(shape1, shape2, ~rbeta(n, shape1 = .x, shape2 = .y))
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
+  # Get parameter values
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, means = means, sds = sds)
+
+  # Generate random beta samples
+  map2(means, sds, \(x, y) {
+    if (y == 0) { # Check for zero to prevent division by zero
+      rep(x, n) # Return a vector of n values equal to the mean if SD equals zero
+    } else {
+      params <- get_beta_params(x, y)
+      rbeta(n, shape1 = params$shape_a, shape2 = params$shape_b)
+    }
+  })
 }
 
 
@@ -79,10 +210,37 @@ sample_beta <- function(df, param, n) {
 #' 
 #' @importFrom purrr map2
 sample_nbinom <- function(df, param, n) {
-  mu <- df[[paste0(param, "_mean")]]
-  sigma <- df[[paste0(param, "_sd")]]
-  k <- mu^2 / (sigma^2 - mu)
-  map2(k, mu, ~rnbinom(n, size = .x, mu = .y))
+  # Check whether 'df' is a dataframe
+  if (!inherits(df, "data.frame")) {
+    stop("Parameter 'df' must be a data.frame or tibble.")
+  }
+
+  # Get parameter values
+  means <- df[[paste0(param, "_mean")]]
+  sds <- df[[paste0(param, "_sd")]]
+
+  # Validate parameter values
+  validate_sample_method_input(n, means = means, sds = sds)
+
+  # Check whether mean is greater than zero
+  if (any(means <= 0)) {
+    stop("Mean must be greater than zero.")
+  }
+
+  # Check whether sd is greater than zero (note that this is different from sample_norm)
+  if (any(sds <= 0)) {
+    stop("Standard deviation must be greater than zero.")
+  }
+
+  # Calculate dispersion parameter values
+  ks <- means^2 / (sds^2 - means)
+
+  # Check whether dispersion is greater than zero
+  if (any(ks <= 0)) {
+    stop("Dispersion must be greater than zero.")
+  }
+  # Generate random negative binomial samples
+  map2(ks, means, ~rnbinom(n, size = .x, mu = .y))
 }
 
 

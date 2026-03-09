@@ -1,7 +1,7 @@
 Package: sfcm
 Type: Package
 Title: Stochastic Flux Collision Model
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Jurjan", "van der Zee", , "j.vanderzee@altwym.nl", role = c("aut", "cre")),
     person("Gerben", "IJntema", , "g.ijntema@waardenburg.eco", role = "ctb")
@@ -10,7 +10,7 @@ Description: Tools for estimating bird collisions in planned wind farms using a 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Imports: 
     dplyr,
