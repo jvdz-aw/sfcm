@@ -7,7 +7,10 @@
 #' probability distributions to apply (`distributions`), and the number of samples to 
 #' generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
 #' 
-#' Simulation is currently only supported for the parameters `flux`, `turbs_e`, and `p_col`. 
+#' We currently recommend to only simulate `flux` values. Simulating `turbs_e` and `p_col` values
+#' is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
+#' but should \emph{not} be used in formal studies.
+#' 
 #' The normal, Poisson, negative binomial, and beta distributions are implemented, 
 #' but not all distributions are available for every parameter. See the \strong{Parameters} 
 #' section for details on which distributions can be used with each parameter.
@@ -19,7 +22,8 @@
 #' @param simulation_input A dataframe containing input parameters for the simulation. Parameters to 
 #' simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
 #' of the parameter to simulate. 
-#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, `turbs_e` or `p_col`.
+#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, 
+#' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
 #' @param distributions A string vector of probability distributions to use for generating random samples of a 
 #' parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
 #' @param n The number of random samples to generate.
