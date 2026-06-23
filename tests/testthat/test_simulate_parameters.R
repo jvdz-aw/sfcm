@@ -25,15 +25,18 @@ test_df <- data.frame(
 
 test_that("simulate_parameters runs without errors", {
 
-  parameters <- c("flux", "turbs_e", "p_col")
-  distributions <- c("poisson", "poisson", "beta")
+  parameters <- "flux"
+  distributions <- "poisson"
   n_sims <- 10
 
   # Should run without errors
-  res <- expect_no_error(simulate_parameters(simulation_input = test_df,
-                                             parameters = parameters,
-                                             distributions = distributions,
-                                             n = n_sims))
+  res <- expect_no_error(
+    simulate_parameters(
+      simulation_input = test_df,
+      parameters = parameters,
+      distributions = distributions,
+      n = n_sims
+    ))
 
   # Check whether the correct columns are returned
   exp_cols <- c("species",
@@ -51,6 +54,32 @@ test_that("simulate_parameters runs without errors", {
   # Number of rows should be equal to nrows test_df times n_sims
   exp_nrows <- nrow(test_df) * n_sims
   expect_equal(nrow(res), exp_nrows)
+
+})
+
+
+test_that("simulate_parameters throws the expected warnings when simulating experimental parameters", {
+
+  parameters <- c("turbs_e", "p_col")
+  distributions <- c("poisson", "beta")
+  n_sims <- 10
+
+  # Should throw two warnings, which we'll capture and test
+  wrns <- capture_warnings(
+    simulate_parameters(
+      simulation_input = test_df,
+      parameters = parameters,
+      distributions = distributions,
+      n = n_sims
+    )
+  )
+
+  # Check whether two warnings are thrown
+  expect_length(wrns, 2)
+
+  # Check warning messages
+  expect_match(wrns[1], "Simulating values for 'turbs_e' is experimental and should not be used in formal studies.")
+  expect_match(wrns[2], "Simulating values for 'p_col' is experimental and should not be used in formal studies.")
 
 })
 
@@ -94,10 +123,15 @@ test_that("simulate_parameters runs without errors when using a subset of parame
   # Result should contain a column `flux_samples`
   expect_true("flux" %in% names(res))
 
-  # Try another but with two parameters
-  res_two_pars <- expect_no_error(simulate_parameters(simulation_input = test_df, parameters = c("flux", "p_col"),
-                                                      distributions = c("poisson", "beta"),
-                                                      n = 10))
+  # Try another but with two parameters, which should also throw a warning about 'p_col' being experimental
+  res_two_pars <- expect_warning(
+    simulate_parameters(
+      simulation_input = test_df, 
+      parameters = c("flux", "p_col"),
+      distributions = c("poisson", "beta"),
+      n = 10
+    ), "Simulating values for 'p_col' is experimental and should not be used in formal studies."
+  )
 
   # Result should contain two columns: `flux_samples` and `p_col_samples`
   expect_true("flux" %in% names(res_two_pars))
@@ -153,7 +187,7 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
 
 
 test_that("simulate_parameters correctly returns a `model_input` object", {
-  parameters <- c("flux", "turbs_e")
-  distributions <- c("nbinom", "poisson")
+  parameters <- "flux"
+  distributions <- "nbinom"
   expect_true(inherits(simulate_parameters(test_df, parameters, distributions), "model_input"))
 })

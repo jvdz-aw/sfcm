@@ -103,11 +103,18 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     "turb_dist", "turb_dist_ref", "turbs_e", "turbs_e_ref", "p_col"
   )
 
+  # Mark experimental parameters
+  experimental_pars <- c("turbs_e", "p_col")
+
   sample_methods <- get_sample_methods() # Get sampling dispatch
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
 
   # Perform checks on parameters
   for (parameter in parameters) {
+
+    if (parameter %in% experimental_pars) {
+      warning(paste0("Simulating values for '", parameter, "' is experimental and should not be used in formal studies."))
+    }
 
     if (!parameter %in% names(allowed_distributions)) {
       stop(paste("The following parameter cannot be simulated:", parameter))
