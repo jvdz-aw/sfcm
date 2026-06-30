@@ -7,7 +7,10 @@
 #' probability distributions to apply (`distributions`), and the number of samples to 
 #' generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
 #' 
-#' Simulation is currently only supported for the parameters `flux`, `turbs_e`, and `p_col`. 
+#' We currently recommend to only simulate `flux` values. Simulating `turbs_e` and `p_col` values
+#' is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
+#' but should \emph{not} be used in formal studies.
+#' 
 #' The normal, Poisson, negative binomial, and beta distributions are implemented, 
 #' but not all distributions are available for every parameter. See the \strong{Parameters} 
 #' section for details on which distributions can be used with each parameter.
@@ -19,7 +22,8 @@
 #' @param simulation_input A dataframe containing input parameters for the simulation. Parameters to 
 #' simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
 #' of the parameter to simulate. 
-#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, `turbs_e` or `p_col`.
+#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, 
+#' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
 #' @param distributions A string vector of probability distributions to use for generating random samples of a 
 #' parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
 #' @param n The number of random samples to generate.
@@ -99,11 +103,18 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     "turb_dist", "turb_dist_ref", "turbs_e", "turbs_e_ref", "p_col"
   )
 
+  # Mark experimental parameters
+  experimental_pars <- c("turbs_e", "p_col")
+
   sample_methods <- get_sample_methods() # Get sampling dispatch
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename
 
   # Perform checks on parameters
   for (parameter in parameters) {
+
+    if (parameter %in% experimental_pars) {
+      warning(paste0("Simulating values for '", parameter, "' is experimental and should not be used in formal studies."))
+    }
 
     if (!parameter %in% names(allowed_distributions)) {
       stop(paste("The following parameter cannot be simulated:", parameter))

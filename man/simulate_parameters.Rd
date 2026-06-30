@@ -11,7 +11,8 @@ simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 simulate should have the following column names: \verb{<par>_mean} and \verb{<par>_sd}, where \verb{<par>} is the name
 of the parameter to simulate.}
 
-\item{parameters}{A string vector of parameters to simulate. Valid options are: \code{flux}, \code{turbs_e} or \code{p_col}.}
+\item{parameters}{A string vector of parameters to simulate. Valid options are: \code{flux},
+\code{turbs_e} (\strong{EXPERIMENTAL}) or \code{p_col} (\strong{EXPERIMENTAL}).}
 
 \item{distributions}{A string vector of probability distributions to use for generating random samples of a
 parameter. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
@@ -28,7 +29,10 @@ probability distributions. The function uses a dataframe of parameter values
 probability distributions to apply (\code{distributions}), and the number of samples to
 generate (\code{n}), returning a simulated \code{model_input} object that can be supplied to \code{\link[=run_model]{run_model()}}.
 
-Simulation is currently only supported for the parameters \code{flux}, \code{turbs_e}, and \code{p_col}.
+We currently recommend to only simulate \code{flux} values. Simulating \code{turbs_e} and \code{p_col} values
+is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
+but should \emph{not} be used in formal studies.
+
 The normal, Poisson, negative binomial, and beta distributions are implemented,
 but not all distributions are available for every parameter. See the \strong{Parameters}
 section for details on which distributions can be used with each parameter.
