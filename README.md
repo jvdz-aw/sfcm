@@ -24,26 +24,19 @@ allows for modelling uncertainty in parameter estimates via simulation.
 
 ## Installation
 
-You can install the development version of sfcm from
-[GitHub](https://github.com/jvdz-aw/sfcm) with:
+You can install the development version from
+[GitHub](https://github.com/jvdz-aw/sfcm) with `pak`:
 
 ``` r
 # install.packages("pak")
 pak::pak("jvdz-aw/sfcm")
 ```
 
-Or using:
+Or using `devtools`:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("jvdz-aw/sfcm")
-```
-
-Alternatively, you can download the binary version you prefer and
-install it with:
-
-``` r
-install.packages("sfcm_0.1.0.tar.gz")
 ```
 
 ## Example
