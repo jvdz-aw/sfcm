@@ -1,0 +1,192 @@
+---
+title: "Running a non-stochastic flux collision model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{non-stochastic-flux-collision-model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, message = FALSE}
+```
+
+This tutorial vignette demonstrates how to estimate bird collisions in planned wind farms using a non-stochastic flux collision model. It is aimed at new users and users interested
+in obtaining deterministic baselines.
+
+### Preparing the input data
+
+In order to run a non-stochastic flux collision model, users must provide a data frame containing the required input parameters.
+
+```{r}
+raw_data <- data.frame(
+  species = c("A", "B"),
+  flux = c(10, 15),
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.8,
+  h_prop_ref = 0.6,
+  rotor_d = 100,
+  rotor_d_ref = 80,
+  turb_dist = 250,
+  turb_dist_ref = 200,
+  turbs_e = 2,
+  turbs_e_ref = 1.5,
+  p_col = c(0.8, 0.6)
+)
+
+raw_data
+```
+
+Before running the model, this data frame must be converted into a `model_input` object using the `model_input()` constructor function:
+
+```{r}
+library(sfcm)
+model_data <- model_input(raw_data)
+```
+
+We can check the class of the object we just created using the `class()` function.
+
+```{r}
+class(model_data)
+```
+
+The `model_input` object is a dedicated S3 class designed to handle data validation before any computations begin. Rather than letting the model fail halfway through due to a formatting error, the `model_input()` constructor acts as a gatekeeper. 
+
+To illustrate this, let's try to convert a dataframe from which one of the required input parameters is missing.
+
+```{r, error = TRUE}
+raw_data <- data.frame(
+  species = c("A", "B"),
+  flux = c(10, 15),
+  a_macro = 0.95,
+  h_prop = 0.8,
+  h_prop_ref = 0.6,
+  rotor_d = 100,
+  rotor_d_ref = 80,
+  turb_dist = 250,
+  turb_dist_ref = 200,
+  turbs_e = 2,
+  turbs_e_ref = 1.5,
+  p_col = c(0.8, 0.6)
+)
+
+model_data <- model_input(raw_data)
+```
+
+Note that _species_ is not a required input parameter, but merely an identifier for the different sets of input parameters. So the following code is valid.
+
+```{r, error = TRUE}
+raw_data <- data.frame(
+  flux = c(10, 15),
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.8,
+  h_prop_ref = 0.6,
+  rotor_d = 100,
+  rotor_d_ref = 80,
+  turb_dist = 250,
+  turb_dist_ref = 200,
+  turbs_e = 2,
+  turbs_e_ref = 1.5,
+  p_col = c(0.8, 0.6)
+)
+
+model_data <- model_input(raw_data)
+class(model_data)
+```
+
+You can check the `fcm()` function documentation for an overview of the model input parameters.
+
+To summarise, the user simply needs to create a dataframe with the required input parameters and convert this to a `model_input` object with the `model_input()` constructor function to prepare input data for the non-stochastic flux collision model. 
+
+There are multiple ways to prepare a dataframe. For example, users may store bird monitoring data and wind farm data in different CSV files and import these using `read.csv()` from base R or `read_csv()` from the _readr_ package. Fluxes may first be estimated from the bird monitoring data, and later combined with the wind farm data to create input data, or even combined with aggregated flux data from previous studies. 
+
+For this reason, the _sfcm_ package does not provide import functions or force you into a single, highly specific data ingestion pipeline.
+
+Instead, _sfcm_ is designed to be completely format-agnostic. The package only requires that your final data is assembled into a standard R data frame containing the expected model input parameters. How you choose to acquire, clean, and combine your data to reach that point is entirely up to you. Whether you are querying a database, parsing CSV files, or simply typing a small dataset by hand, any workflow that outputs a standard R dataframe is fully supported.
+
+Once your dataframe is ready, you simply pass it to `model_input()` to validate and prepare it for a model analysis, leaving you in complete control of your upstream data workflow.
+
+### Running the model
+
+Once a `model_input` object has been created by the user, it is relatively straightforward to run a non-stochastic flux collision model
+by simply passing the model input object to the `run_model()` function. 
+
+First we'll prepare a valid `model_input` object that includes a _species_ column so we can keep track of the different parameter sets.
+```{r}
+model_data <- model_input(
+  data.frame(
+    species = c("A", "B"),
+    flux = c(10, 15),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.8,
+    h_prop_ref = 0.6,
+    rotor_d = 100,
+    rotor_d_ref = 80,
+    turb_dist = 250,
+    turb_dist_ref = 200,
+    turbs_e = 2,
+    turbs_e_ref = 1.5,
+    p_col = c(0.8, 0.6)
+  )
+)
+
+model_data
+```
+
+Next, we can pass this object to the `run_model()` function to perform an analysis with the non-stochastic flux collision model.
+
+```{r}
+model_res <- run_model(model_data)
+```
+
+### Interpreting the output
+
+The `run_model()` function is essentially a wrapper that applies the `fcm()` function to each row in the `model_input` dataframe. The `fcm()` function performs the actual calculation. The result of this calculation is then added to the input dataframe as a new column called `n_collisions`.
+
+So the output of `run_model()` is simply the input dataframe you provided plus the `n_collisions` estimated from the input. 
+
+```{r}
+names(model_data)
+names(model_res)
+```
+
+By storing the results per row, input parameters are coupled to the resulting bird collision estimates. However, this can lead to clutter. Fortunately, we can easily subset some columns.
+
+```{r}
+cols <- c("species", "n_collisions")
+model_res[cols]
+```
+
+Or if you prefer _dplyr_.
+
+```{r, message = FALSE}
+# Load the required library
+library(dplyr)
+
+# Select species and n_collisions columns from the model results
+model_res %>%
+  select(species, n_collisions)
+```
+
+### Visualizing results
+
+Here is a simple example of a barplot created with _ggplot2_ to visualize the model results. 
+
+```{r}
+# Load the required library
+library(ggplot2)
+
+# Create the barplot
+ggplot(model_res, aes(x = species, y = n_collisions, fill = species)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Species", y = "Expected number of bird collisions", fill = "Species")
+```
