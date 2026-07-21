@@ -1,8 +1,8 @@
 ---
-title: "Running a non-stochastic flux collision model"
+title: "Deterministic flux collision model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{non-stochastic-flux-collision-model}
+  %\VignetteIndexEntry{deterministic-flux-collision-model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,12 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-This tutorial vignette demonstrates how to estimate bird collisions in planned wind farms using a non-stochastic flux collision model. It is aimed at new users and users interested
+This tutorial vignette demonstrates how to estimate bird collisions in planned wind farms using a deterministic flux collision model. It is aimed at new users and users interested
 in obtaining deterministic baselines.
 
 ### Preparing the input data
 
-In order to run a non-stochastic flux collision model, users must provide a data frame containing the required input parameters.
+In order to run a deterministic flux collision model, users must provide a data frame containing the required input parameters.
 
 ```{r}
 raw_data <- data.frame(
@@ -101,7 +101,7 @@ class(model_data)
 
 You can check the `fcm()` function documentation for an overview of the model input parameters.
 
-To summarise, the user simply needs to create a dataframe with the required input parameters and convert this to a `model_input` object with the `model_input()` constructor function to prepare input data for the non-stochastic flux collision model. 
+To summarise, the user simply needs to create a dataframe with the required input parameters and convert this to a `model_input` object with the `model_input()` constructor function to prepare input data for the deterministic flux collision model. 
 
 There are multiple ways to prepare a dataframe. For example, users may store bird monitoring data and wind farm data in different CSV files and import these using `read.csv()` from base R or `read_csv()` from the _readr_ package. Fluxes may first be estimated from the bird monitoring data, and later combined with the wind farm data to create input data, or even combined with aggregated flux data from previous studies. 
 
@@ -113,7 +113,7 @@ Once your dataframe is ready, you simply pass it to `model_input()` to validate 
 
 ### Running the model
 
-Once a `model_input` object has been created by the user, it is relatively straightforward to run a non-stochastic flux collision model
+Once a `model_input` object has been created by the user, it is relatively straightforward to run a deterministic flux collision model
 by simply passing the model input object to the `run_model()` function. 
 
 First we'll prepare a valid `model_input` object that includes a _species_ column so we can keep track of the different parameter sets.
@@ -139,7 +139,7 @@ model_data <- model_input(
 model_data
 ```
 
-Next, we can pass this object to the `run_model()` function to perform an analysis with the non-stochastic flux collision model.
+Next, we can pass this object to the `run_model()` function to perform an analysis with the deterministic flux collision model.
 
 ```{r}
 model_res <- run_model(model_data)
