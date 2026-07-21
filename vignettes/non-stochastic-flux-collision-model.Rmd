@@ -14,9 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, message = FALSE}
-```
-
 This tutorial vignette demonstrates how to estimate bird collisions in planned wind farms using a non-stochastic flux collision model. It is aimed at new users and users interested
 in obtaining deterministic baselines.
 
