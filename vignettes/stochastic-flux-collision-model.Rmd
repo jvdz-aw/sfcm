@@ -1,0 +1,201 @@
+---
+title: "Stochastic flux collision model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{stochastic-flux-collision-model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette demonstrates how to estimate bird mortality for planned wind farms using a stochastic flux collision model. It is designed for users who are already familiar with basic deterministic modeling. At its core, the stochastic flux collision model simply runs a deterministic model repeatedly across a distribution of parameter values. Because of this, understanding the deterministic workflow first is strongly recommended.
+
+### Parameter simulation
+
+To generate values for a given parameter, we sample from its probability distribution using the `simulate_parameters()` function. Parameter simulation is available for `flux`, `turbs_e`, and `p_col`.
+
+> Note: parameter simulation for `turbs_e` and `p_col` is _experimental_.
+
+The function requires an input data frame (a `data.frame` or `tibble`) containing the necessary model inputs. Its structure matches a standard `model_input` data frame, except for the parameters you wish to simulate. To generate random values for `flux`, `turbs_e`, or `p_col`, provide mean and standard deviation columns instead, named using the convention `<PARAMETER>_mean` and `<PARAMETER>_sd`. 
+
+> Note: you only need a `<PARAMETER>_mean` column when generating random values using a _Poisson_ distribution. In this case the `<PARAMETER>_sd` will be simply ignored.
+
+#### Simulating a single parameter
+
+Here we show an example of how to generate random values for the `flux` parameter by sampling from a _negative binomial_ distribution. First, we create a data frame that contains mean and standard deviation columns `flux_mean` and `flux_sd`:
+
+```{r}
+# First load the sfcm package
+library(sfcm)
+
+# Create simulation input data frame for generating random values for flux parameter
+flux_sim_input <- data.frame(
+  species = c("A", "B"),
+  flux_mean = c(50, 100), # Mean flux
+  flux_sd = c(10, 50),    # Standard deviation of flux
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.6,
+  h_prop_ref = 0.67,
+  rotor_d = 170,
+  rotor_d_ref = 60,
+  turb_dist = 600,
+  turb_dist_ref = 250,
+  turbs_e = c(4, 2),
+  turbs_e_ref = 4,
+  p_col = c(0.5, 0.8)
+)
+
+print(flux_sim_input)
+```
+
+This data frame can now be passed into `simulate_parameters()` using the following syntax:
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Simulate flux values by sampling from a negative binomial distributon
+flux_sim_output <- simulate_parameters(
+  simulation_input = flux_sim_input, 
+  parameters = "flux", 
+  distributions = "nbinom"
+)
+
+print(flux_sim_output)
+```
+
+> Note: setting a seed ensures the results are reproducible between different runs of your scripts.
+
+The output data frame no longer contains the `flux_mean` and `flux_sd` columns. Instead, it contains a simulated flux value for each performed draw (1,000 by default) as well as the draw number in column `simulation_id`. 
+
+The number of draws can be specified by the user. For example, to generate only 5 random values per species:
+
+```{r}
+# Perform a small test simulation with n = 10 iterations
+flux_sim_output_small <- simulate_parameters(
+  simulation_input = flux_sim_input, 
+  parameters = "flux", 
+  distributions = "nbinom",
+  n = 5
+)
+
+print(flux_sim_output_small)
+```
+
+#### Simulating multiple parameters
+
+It is possible to generate random values for multiple parameters at once with `simulate_parameters()`. To do this, we need to proved mean and standard deviation columns for each parameter we want to simulate, and pass a vector of parameter names and a vector of valid probability distributions. 
+
+In the following example we perform a small simulation where we generate 5 `flux` and `p_col` values per species using the _Poisson_ and _beta_ distributions, respectively:
+
+```{r}
+# Create simulation input data frame for generating random values for flux and p_col parameters
+multi_sim_input <- data.frame(
+  species = c("A", "B"),
+  flux_mean = c(50, 100),   # Mean flux
+  flux_sd = c(10, 50),      # Standard deviation of flux (ignored here because of Poisson distribution)
+  a_macro = 0.95,
+  f_prop = 1,
+  h_prop = 0.6,
+  h_prop_ref = 0.67,
+  rotor_d = 170,
+  rotor_d_ref = 60,
+  turb_dist = 600,
+  turb_dist_ref = 250,
+  turbs_e = c(4, 2),
+  turbs_e_ref = 4,
+  p_col_mean = c(0.5, 0.8), # Mean collision probability
+  p_col_sd = c(0.05, 0.1)   # Standard deviation of collision probability
+)
+
+# Run a small test simulation
+multi_sim_output_small <- simulate_parameters(
+  simulation_input = multi_sim_input,
+  parameters = c("flux", "p_col"),
+  distributions = c("poisson", "beta"),
+  n = 5
+)
+
+# Print subset of columns
+cols <- c("species", "simulation_id", "flux", "p_col")
+print(multi_sim_output_small[cols])
+```
+
+Generating enough samples is always important, but it is especially critical when simulating multiple parameters, as correlations can unexpectedly arise between them. We can see this occur in our small test simulation:
+
+```{r, message = FALSE}
+library(dplyr)
+
+# Calculate within species correlation between simulated flux and p_col values
+multi_sim_output_small %>%
+  group_by(species) %>%
+  summarise(within_grp_cor = cor(flux, p_col))
+```
+
+The default sample size is generally enough to avoid accidental correlations between parameters, but you should always verify this for your own dataset. Let's check this with a simulation using the default sample size:
+
+```{r, warning = FALSE}
+multi_sim_output_default_size <- simulate_parameters(
+  simulation_input = multi_sim_input,
+  parameters = c("flux", "p_col"),
+  distributions = c("poisson", "beta"),
+  n = 1000 # Explicitly set to default sample size
+)
+multi_sim_output_default_size %>%
+  group_by(species) %>%
+  summarise(within_grp_cor = cor(flux, p_col))
+```
+
+### Stochastic modeling
+
+The output data frame generated by `simulate_parameters()` is a `model_input` object. We can verify this using the following code:
+
+```{r}
+class(flux_sim_output)
+```
+
+Once parameter simulation has been done, running the model is straightforward. As you might recall from the deterministic flux collision model tutorial, `model_input` objects can be directly passed into the `run_model()` function. 
+
+```{r}
+flux_sim_model_res <- run_model(flux_sim_output)
+print(flux_sim_model_res)
+```
+
+The only difference between the results of deterministic and stochastic flux collision model, is that the stochastic flux collision model has multiple rows per species and an additional column `simulation_id` that identifies each draw of the parameter simulation.
+
+### Visualizing model results
+
+The results of the stochastic flux collision model can be plotted using a histogram. By including `facet_wrap(~species)` we can easily create a subpanel for each species. 
+
+```{r}
+library(ggplot2)
+
+# Create simple histogram of results
+p <- ggplot(flux_sim_model_res, aes(x = n_collisions, fill = species)) +
+  geom_histogram(binwidth = 0.1) +
+  facet_wrap(~species)
+p
+```
+
+We can also include results from a deterministic flux collision model in the same plot. For this we need to run a deterministic model using the same input parameters as the stochastic model. To do this we can simply drop the `flux_sd` column and rename the `flux_mean` column to `flux`. After this has been done, it's simply a matter of calling the `model_input()` construction function on the input data frame and subsequently running `run_model()`. In this example, we plot the deterministic results as vertical black lines using `geom_vline()`. 
+
+```{r}
+# Create input for a deterministic flux collision model
+flux_determ_input <- flux_sim_input %>%
+  select(-flux_sd) %>%
+  rename(flux = flux_mean) %>%
+  model_input()
+
+# Run deterministic model input
+flux_determ_res <- run_model(flux_determ_input)
+
+# Add deterministic results to plot
+p + geom_vline(aes(xintercept = n_collisions), flux_determ_res)
+```
