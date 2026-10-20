@@ -26,7 +26,8 @@
 #' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
 #' @param distributions A string vector of probability distributions to use for generating random samples of a 
 #' parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
-#' @param n The number of random samples to generate.
+#' @param n The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000 
+#' to prevent correlation among parameters. 
 #'
 #' @returns A `model_input` object with \emph{n} rows containing simulated parameters.
 #' 
