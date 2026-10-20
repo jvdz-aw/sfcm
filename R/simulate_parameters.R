@@ -133,6 +133,11 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     }
   }
 
+  # Check whether n is a positive integer
+  if (!(is.numeric(n)) || length(n) != 1 || n <= 0 || n %% 1 != 0) {
+    stop("'n' must be a single positive integer.")
+  }
+
   # Add simulation IDs per row
   simulation_input <- simulation_input %>%
     mutate(simulation_id = map(seq_len(nrow(simulation_input)), ~ seq_len(n)))
