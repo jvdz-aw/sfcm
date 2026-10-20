@@ -7,17 +7,19 @@
 simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 }
 \arguments{
-\item{simulation_input}{A dataframe containing input parameters for the simulation. Parameters to
-simulate should have the following column names: \verb{<par>_mean} and \verb{<par>_sd}, where \verb{<par>} is the name
-of the parameter to simulate.}
+\item{simulation_input}{A dataframe containing input parameters. For each parameter in
+\code{parameters}, the dataframe must contain columns \verb{<par>_mean} and \verb{<par>_sd} where
+\verb{<par>} is the parameter name. Other columns (e.g., \code{a_macro}, \code{f_prop}, etc.) are
+passed through to the output.}
 
-\item{parameters}{A string vector of parameters to simulate. Valid options are: \code{flux},
+\item{parameters}{A character vector of parameters to simulate. Valid options are: \code{flux},
 \code{turbs_e} (\strong{EXPERIMENTAL}) or \code{p_col} (\strong{EXPERIMENTAL}).}
 
-\item{distributions}{A string vector of probability distributions to use for generating random samples of a
-parameter. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
+\item{distributions}{A character vector of probability distributions to use for generating random samples of a
+parameter, one for each parameter in \code{parameters}. Must have the same length as \code{parameters}. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
 
-\item{n}{The number of random samples to generate.}
+\item{n}{The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000
+to prevent correlation among parameters.}
 }
 \value{
 A \code{model_input} object with \emph{n} rows containing simulated parameters.

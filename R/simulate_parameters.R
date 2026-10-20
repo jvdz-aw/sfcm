@@ -19,14 +19,16 @@
 #' When multiple parameters are simulated it is recommended to generate a large enough number of random
 #' samples (e.g., \emph{n} > 10000) in order to prevent correlation among simulated parameters.
 #' 
-#' @param simulation_input A dataframe containing input parameters for the simulation. Parameters to 
-#' simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
-#' of the parameter to simulate. 
-#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, 
+#' @param simulation_input A dataframe containing input parameters. For each parameter in
+#' `parameters`, the dataframe must contain columns `<par>_mean` and `<par>_sd` where
+#' `<par>` is the parameter name. Other columns (e.g., `a_macro`, `f_prop`, etc.) are
+#' passed through to the output.
+#' @param parameters A character vector of parameters to simulate. Valid options are: `flux`, 
 #' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
-#' @param distributions A string vector of probability distributions to use for generating random samples of a 
-#' parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
-#' @param n The number of random samples to generate.
+#' @param distributions A character vector of probability distributions to use for generating random samples of a 
+#' parameter, one for each parameter in `parameters`. Must have the same length as `parameters`. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
+#' @param n The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000 
+#' to prevent correlation among parameters. 
 #'
 #' @returns A `model_input` object with \emph{n} rows containing simulated parameters.
 #' 
@@ -63,10 +65,11 @@
 #' @importFrom purrr reduce
 #' @importFrom tidyr unnest
 #' @importFrom magrittr `%>%`
-#' @importFrom dplyr select rename_with relocate
+#' @importFrom dplyr mutate select rename_with relocate
 #' @importFrom stringr str_remove
 #' @importFrom tidyselect all_of any_of last_col
 #' @importFrom stats setNames
+#' @importFrom tibble as_tibble
 #' 
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
@@ -120,32 +123,47 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
       stop(paste("The following parameter cannot be simulated:", parameter))
     }
 
+    # Check whether required columns exist
+    req_cols <- c(paste0(parameter, "_mean"), paste0(parameter, "_sd"))
+    missing_cols <- req_cols[!req_cols %in% names(simulation_input)]
+    if (length(missing_cols) > 0) {
+      stop(paste0("Missing required columns for parameter ", parameter, ": ", paste(missing_cols, collapse = ", ")))
+    }
+
+    # Check whether distribution is valid for parameter
     selected_distribution <- dists[[parameter]]
     if (!selected_distribution %in% allowed_distributions[[parameter]]) {
-      stop(paste0("Probability distribution '", selected_distribution, "' is unavailable for parameter '", parameter, "'"))
+      stop(
+        sprintf(
+          "Probability distribution '%s' is unavailable for parameter '%s'. Available options: '%s'.",
+          selected_distribution, parameter, paste(allowed_distributions[[parameter]], collapse = "', '")
+        )
+      )
     }
   }
 
-  # Add simulation IDs per row
-  simulation_input <- simulation_input %>%
-    mutate(simulation_id = map(seq_len(nrow(simulation_input)), ~ seq_len(n)))
+  # Check whether n is a positive integer
+  if (!(is.numeric(n)) || length(n) != 1 || n <= 0 || n %% 1 != 0) {
+    stop("'n' must be a single positive integer.")
+  }
 
-  # Simulate values using reduce instead of a for-loop for efficiency
-  simulation_output <- reduce(parameters, function(df, parameter) {
+  # Create base dataframe with repeated rows
+  simulation_output <- as_tibble(simulation_input[rep(seq_len(nrow(simulation_input)), each = n), ])
+  simulation_output$simulation_id <- rep(seq_len(n), times = nrow(simulation_input))
 
-    # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
+  # For each parameter generate samples and add as column
+  for (parameter in parameters) {
     dist_name <- dists[[parameter]]
     dist_func <- sample_methods[[dist_name]]
+    samples <- unlist(dist_func(simulation_input, parameter, n))
+    simulation_output[[parameter]] <- samples
+  }
+  
+  # Ensure only columns that exist in the simulation output are used for ordering
+  existing_cols <- intersect(col_order, names(simulation_output))
 
-    # Generate random samples
-    samples <- dist_func(df, parameter, n)
-
-    # Add generated samples to a new column named `<parameter>_samples`
-    sample_col <- paste0(parameter, "_samples")
-    df[[sample_col]] <- samples
-    df
-  }, .init = simulation_input) %>%
-    unnest(cols = c("simulation_id", all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
+  # Handle column renaming/removal
+  simulation_output <- simulation_output %>%
     select(!any_of(cols_to_remove_rename$to_remove)) %>%
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
