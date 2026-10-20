@@ -19,9 +19,10 @@
 #' When multiple parameters are simulated it is recommended to generate a large enough number of random
 #' samples (e.g., \emph{n} > 10000) in order to prevent correlation among simulated parameters.
 #' 
-#' @param simulation_input A dataframe containing input parameters for the simulation. Parameters to 
-#' simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
-#' of the parameter to simulate. 
+#' @param simulation_input A dataframe containing input parameters. For each parameter in
+#' `parameters`, the dataframe must contain columns `<par>_mean` and `<par>_sd` where
+#' `<par>` is the parameter name. Other columns (e.g., `a_macro`, `f_prop`, etc.) are
+#' passed through to the output.
 #' @param parameters A character vector of parameters to simulate. Valid options are: `flux`, 
 #' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
 #' @param distributions A character vector of probability distributions to use for generating random samples of a 
