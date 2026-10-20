@@ -69,6 +69,7 @@
 #' @importFrom stringr str_remove
 #' @importFrom tidyselect all_of any_of last_col
 #' @importFrom stats setNames
+#' @importFrom tibble as_tibble
 #' 
 #' @export
 simulate_parameters <- function(simulation_input, parameters, distributions, n = 1000) {
@@ -146,32 +147,25 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
     stop("'n' must be a single positive integer.")
   }
 
-  # Add simulation IDs per row
-  simulation_input <- simulation_input %>%
-    mutate(simulation_id = map(seq_len(nrow(simulation_input)), ~ seq_len(n)))
+  # Create base dataframe with repeated rows
+  simulation_output <- as_tibble(simulation_input[rep(seq_len(nrow(simulation_input)), each = n), ])
+  simulation_output$simulation_id <- rep(seq_len(n), times = nrow(simulation_input))
 
-  # Simulate values using reduce instead of a for-loop for efficiency
-  simulation_output <- reduce(parameters, function(df, parameter) {
-
-    # Retrieve distribution selected for parameter and insert into dispatch to get the relevant sampling function
+  # For each parameter generate samples and add as column
+  for (parameter in parameters) {
     dist_name <- dists[[parameter]]
     dist_func <- sample_methods[[dist_name]]
-
-    # Generate random samples
-    samples <- dist_func(df, parameter, n)
-
-    # Add generated samples to a new column named `<parameter>_samples`
-    sample_col <- paste0(parameter, "_samples")
-    df[[sample_col]] <- samples
-    df
-  }, .init = simulation_input) %>%
-    unnest(cols = c("simulation_id", all_of(paste0(parameters, "_samples")))) %>% # Unnest simulation_id and all parameter columns
-    select(!any_of(cols_to_remove_rename$to_remove)) %>%
-    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) #%>%
+    samples <- unlist(dist_func(simulation_input, parameter, n))
+    simulation_output[[parameter]] <- samples
+  }
   
   # Ensure only columns that exist in the simulation output are used for ordering
   existing_cols <- intersect(col_order, names(simulation_output))
+
+  # Handle column renaming/removal
   simulation_output <- simulation_output %>%
+    select(!any_of(cols_to_remove_rename$to_remove)) %>%
+    rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
     relocate(all_of(col_order), .after = last_col())
 
   model_input(simulation_output) # Converts simulation output to `model_input` object
