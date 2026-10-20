@@ -63,7 +63,7 @@
 #' @importFrom purrr reduce
 #' @importFrom tidyr unnest
 #' @importFrom magrittr `%>%`
-#' @importFrom dplyr select rename_with relocate
+#' @importFrom dplyr mutate select rename_with relocate
 #' @importFrom stringr str_remove
 #' @importFrom tidyselect all_of any_of last_col
 #' @importFrom stats setNames
