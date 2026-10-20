@@ -128,9 +128,15 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
       stop(paste0("Missing required columns for parameter ", parameter, ": ", paste(missing_cols, collapse = ", ")))
     }
 
+    # Check whether distribution is valid for parameter
     selected_distribution <- dists[[parameter]]
     if (!selected_distribution %in% allowed_distributions[[parameter]]) {
-      stop(paste0("Probability distribution '", selected_distribution, "' is unavailable for parameter '", parameter, "'"))
+      stop(
+        sprintf(
+          "Probability distribution '%s' is unavailable for parameter '%s'. Available options: '%s'.",
+          selected_distribution, parameter, paste(allowed_distributions[[parameter]], collapse = "', '")
+        )
+      )
     }
   }
 
