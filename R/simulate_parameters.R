@@ -22,10 +22,10 @@
 #' @param simulation_input A dataframe containing input parameters for the simulation. Parameters to 
 #' simulate should have the following column names: `<par>_mean` and `<par>_sd`, where `<par>` is the name
 #' of the parameter to simulate. 
-#' @param parameters A string vector of parameters to simulate. Valid options are: `flux`, 
+#' @param parameters A character vector of parameters to simulate. Valid options are: `flux`, 
 #' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
-#' @param distributions A string vector of probability distributions to use for generating random samples of a 
-#' parameter. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
+#' @param distributions A character vector of probability distributions to use for generating random samples of a 
+#' parameter, one for each parameter in `parameters`. Must have the same length as `parameters`. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
 #' @param n The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000 
 #' to prevent correlation among parameters. 
 #'
