@@ -191,3 +191,36 @@ test_that("simulate_parameters correctly returns a `model_input` object", {
   distributions <- "nbinom"
   expect_true(inherits(simulate_parameters(test_df, parameters, distributions), "model_input"))
 })
+
+
+test_that("calling simulate_parameters on dataframe missing a required columns returns the correct error", {
+
+  # Define a test dataframe with two rows and some NAs
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e_mean = c(4, 2),
+    turbs_e_sd = 0,
+    turbs_e_ref = 4.242641,
+    p_col_mean = c(0.5, 0.8),
+    p_col_sd = c(0.05, 0.1)
+  )
+
+  expect_error(
+    simulate_parameters(
+      simulation_input = test_df, 
+      parameters = c("flux"),
+      distributions = "poisson",
+      n = 10
+    ),
+    "Missing required columns for parameter flux: flux_sd"
+  )
+})

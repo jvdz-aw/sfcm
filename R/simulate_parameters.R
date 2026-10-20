@@ -120,6 +120,13 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
       stop(paste("The following parameter cannot be simulated:", parameter))
     }
 
+    # Check whether required columns exist
+    req_cols <- c(paste0(parameter, "_mean"), paste0(parameter, "_sd"))
+    missing_cols <- req_cols[!req_cols %in% names(simulation_input)]
+    if (length(missing_cols) > 0) {
+      stop(paste0("Missing required columns for parameter ", parameter, ": ", paste(missing_cols, collapse = ", ")))
+    }
+
     selected_distribution <- dists[[parameter]]
     if (!selected_distribution %in% allowed_distributions[[parameter]]) {
       stop(paste0("Probability distribution '", selected_distribution, "' is unavailable for parameter '", parameter, "'"))
