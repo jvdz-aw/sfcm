@@ -16,7 +16,7 @@ fcm(
   turb_dist_ref,
   turbs_e,
   turbs_e_ref,
-  p_col
+  p_col_ref
 )
 }
 \arguments{
@@ -43,7 +43,7 @@ setting this to 1, unless users have strong reasons to believe only part of the 
 
 \item{turbs_e_ref}{The number of turbines encountered by birds in the reference wind farm. Should be a positive numeric value.}
 
-\item{p_col}{The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.}
+\item{p_col_ref}{The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.}
 }
 \value{
 An estimate of the number of bird collisions expected in the planned wind farm.
@@ -71,7 +71,7 @@ n_collisions <- fcm(flux = 10,
                     turb_dist_ref = 200,
                     turbs_e = 2,
                     turbs_e_ref = 1,
-                    p_col = 0.7)
+                    p_col_ref = 0.7)
 print(n_collisions)
 
 }

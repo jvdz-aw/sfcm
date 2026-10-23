@@ -53,8 +53,8 @@ test_that("get_cols_remove_rename returns the expected columns to be removed or 
   parameters <- c("flux", "turbs_e")
 
   # Define expected outcomes
-  exp_to_remove <- c("flux_mean", "flux_sd", "turbs_e_mean", "turbs_e_sd", "p_col_sd")
-  exp_to_rename <- c("flux_samples", "turbs_e_samples", "p_col_mean")
+  exp_to_remove <- c("flux_mean", "flux_sd", "turbs_e_mean", "turbs_e_sd", "p_col_ref_sd")
+  exp_to_rename <- c("flux_samples", "turbs_e_samples", "p_col_ref_mean")
 
   res <- get_cols_remove_rename(parameters)
 

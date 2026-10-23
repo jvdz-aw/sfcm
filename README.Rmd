@@ -69,12 +69,12 @@ test_df <- data.frame(
   turbs_e_mean = c(4, 2),
   turbs_e_sd = 0,
   turbs_e_ref = 4,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
 # Define what parameters to simulate and which probability distributions to use for random sampling
-pars <- c("flux", "turbs_e", "p_col")
+pars <- c("flux", "turbs_e", "p_col_ref")
 dists <- c("nbinom", "poisson", "beta")
 
 # Perform simulation using n = 10 iterations
@@ -95,7 +95,7 @@ The following table shows which probability distributions are supported for each
 |-----------|------------------------------------|
 | flux      | Normal, Poisson, negative binomial |
 | turbs_e   | Poisson                            |
-| p_col     | Beta                               |
+| p_col_ref | Beta                               |
 
 ## Contributing
 

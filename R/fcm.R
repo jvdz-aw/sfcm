@@ -23,7 +23,7 @@
 #' @param turb_dist_ref The distance among turbines in the reference wind farm. Should be a positive numeric value.
 #' @param turbs_e The number of turbines encountered by birds in the planned wind farm. Should be a positive numeric value.
 #' @param turbs_e_ref The number of turbines encountered by birds in the reference wind farm. Should be a positive numeric value.
-#' @param p_col The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.
+#' @param p_col_ref The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.
 #' 
 #' @returns
 #' An estimate of the number of bird collisions expected in the planned wind farm.
@@ -40,7 +40,7 @@
 #'                     turb_dist_ref = 200,
 #'                     turbs_e = 2,
 #'                     turbs_e_ref = 1,
-#'                     p_col = 0.7)
+#'                     p_col_ref = 0.7)
 #' print(n_collisions)
 #' 
 #' @seealso [model_input()], [run_model()]
@@ -55,7 +55,7 @@ fcm <- function(flux, a_macro,
                 rotor_d, rotor_d_ref,
                 turb_dist, turb_dist_ref,
                 turbs_e, turbs_e_ref,
-                p_col) {
+                p_col_ref) {
 
   # Flux at rotor height is given by (h / h_ref)
   flux_rotor_height <- (h_prop) / h_prop_ref
@@ -67,8 +67,8 @@ fcm <- function(flux, a_macro,
   e_corr <- turbs_e / turbs_e_ref
 
   # Correction factor collision probability
-  p_col_corr <- (0.9785 * (rotor_d^2 / rotor_d_ref^2))^-0.26
+  p_col_ref_corr <- (0.9785 * (rotor_d^2 / rotor_d_ref^2))^-0.26
 
   # Estimate expected number of bird collisions
-  flux * (1-a_macro) * f_prop * flux_rotor_height * turb_corr * e_corr * p_col * p_col_corr
+  flux * (1-a_macro) * f_prop * flux_rotor_height * turb_corr * e_corr * p_col_ref * p_col_ref_corr
 }

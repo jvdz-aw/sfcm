@@ -35,7 +35,7 @@ raw_data <- data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6)
+  p_col_ref = c(0.8, 0.6)
 )
 
 raw_data
@@ -71,7 +71,7 @@ raw_data <- data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6)
+  p_col_ref = c(0.8, 0.6)
 )
 
 model_data <- model_input(raw_data)
@@ -92,7 +92,7 @@ raw_data <- data.frame(
   turb_dist_ref = 200,
   turbs_e = 2,
   turbs_e_ref = 1.5,
-  p_col = c(0.8, 0.6)
+  p_col_ref = c(0.8, 0.6)
 )
 
 model_data <- model_input(raw_data)
@@ -132,7 +132,7 @@ model_data <- model_input(
     turb_dist_ref = 200,
     turbs_e = 2,
     turbs_e_ref = 1.5,
-    p_col = c(0.8, 0.6)
+    p_col_ref = c(0.8, 0.6)
   )
 )
 

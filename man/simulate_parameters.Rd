@@ -13,7 +13,7 @@ simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 passed through to the output.}
 
 \item{parameters}{A character vector of parameters to simulate. Valid options are: \code{flux},
-\code{turbs_e} (\strong{EXPERIMENTAL}) or \code{p_col} (\strong{EXPERIMENTAL}).}
+\code{turbs_e} (\strong{EXPERIMENTAL}) or \code{p_col_ref} (\strong{EXPERIMENTAL}).}
 
 \item{distributions}{A character vector of probability distributions to use for generating random samples of a
 parameter, one for each parameter in \code{parameters}. Must have the same length as \code{parameters}. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
@@ -31,7 +31,7 @@ probability distributions. The function uses a dataframe of parameter values
 probability distributions to apply (\code{distributions}), and the number of samples to
 generate (\code{n}), returning a simulated \code{model_input} object that can be supplied to \code{\link[=run_model]{run_model()}}.
 
-We currently recommend to only simulate \code{flux} values. Simulating \code{turbs_e} and \code{p_col} values
+We currently recommend to only simulate \code{flux} values. Simulating \code{turbs_e} and \code{p_col_ref} values
 is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
 but should \emph{not} be used in formal studies.
 
@@ -59,11 +59,11 @@ df <- data.frame(
   turbs_e_mean = c(4, 2),
   turbs_e_sd = 0,
   turbs_e_ref = 4,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
-pars <- c("flux", "turbs_e", "p_col")
+pars <- c("flux", "turbs_e", "p_col_ref")
 dists <- c("nbinom", "poisson", "beta")
 
 sim_out <- simulate_parameters(df, parameters = pars, distributions = dists, n = 10)

@@ -27,7 +27,7 @@
 #'   turb_dist_ref = 200,
 #'   turbs_e = 2,
 #'   turbs_e_ref = 1.5,
-#'   p_col = c(0.8, 0.6)))
+#'   p_col_ref = c(0.8, 0.6)))
 #' 
 #' res <- run_model(df)
 #' print(res)
@@ -55,6 +55,6 @@ run_model <- function(model_input) {
                                           turb_dist_ref = .data$turb_dist_ref,
                                           turbs_e = .data$turbs_e,
                                           turbs_e_ref = .data$turbs_e_ref,
-                                          p_col = .data$p_col), fcm))
+                                          p_col_ref = .data$p_col_ref), fcm))
   }
 }

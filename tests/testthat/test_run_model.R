@@ -11,7 +11,7 @@ turb_dist <- 628.6667
 turb_dist_ref <- 250
 turbs_e <- 2
 turbs_e_ref <- 4.242641
-p_col <- 0.0017
+p_col_ref <- 0.0017
 
 test_df <- data.frame(
   flux = flux,
@@ -25,7 +25,7 @@ test_df <- data.frame(
   turb_dist_ref = turb_dist_ref,
   turbs_e = turbs_e,
   turbs_e_ref = turbs_e_ref,
-  p_col = p_col
+  p_col_ref = p_col_ref
 )
 
 test_that("run_model raises an error when not providing a model_input object as input", {

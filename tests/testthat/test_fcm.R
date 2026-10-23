@@ -14,7 +14,7 @@ test_that("Test a single mortality calculation using FCM", {
   turb_dist_ref <- 250
   turbs_e <- 2
   turbs_e_ref <- 4.242641
-  p_col <- 0.0017
+  p_col_ref <- 0.0017
 
   mortality <- fcm(flux = flux,
                    a_macro = a_macro,
@@ -27,7 +27,7 @@ test_that("Test a single mortality calculation using FCM", {
                    turb_dist_ref = turb_dist_ref,
                    turbs_e = turbs_e,
                    turbs_e_ref = turbs_e_ref,
-                   p_col = p_col)
+                   p_col_ref = p_col_ref)
 
   # Expected mortality given the empirical estimates of parameters
   exp_mort <- 2.553196
