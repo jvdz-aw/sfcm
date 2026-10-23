@@ -7,7 +7,7 @@
 #' probability distributions to apply (`distributions`), and the number of samples to 
 #' generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
 #' 
-#' We currently recommend to only simulate `flux` values. Simulating `turbs_e` and `p_col` values
+#' We currently recommend to only simulate `flux` values. Simulating `turbs_e` and `p_col_ref` values
 #' is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
 #' but should \emph{not} be used in formal studies.
 #' 
@@ -24,7 +24,7 @@
 #' `<par>` is the parameter name. Other columns (e.g., `a_macro`, `f_prop`, etc.) are
 #' passed through to the output.
 #' @param parameters A character vector of parameters to simulate. Valid options are: `flux`, 
-#' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col` (\strong{EXPERIMENTAL}).
+#' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col_ref` (\strong{EXPERIMENTAL}).
 #' @param distributions A character vector of probability distributions to use for generating random samples of a 
 #' parameter, one for each parameter in `parameters`. Must have the same length as `parameters`. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
 #' @param n The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000 
@@ -48,11 +48,11 @@
 #'   turbs_e_mean = c(4, 2),
 #'   turbs_e_sd = 0,
 #'   turbs_e_ref = 4,
-#'   p_col_mean = c(0.5, 0.8),
-#'   p_col_sd = c(0.05, 0.1)
+#'   p_col_ref_mean = c(0.5, 0.8),
+#'   p_col_ref_sd = c(0.05, 0.1)
 #' )
 #' 
-#' pars <- c("flux", "turbs_e", "p_col")
+#' pars <- c("flux", "turbs_e", "p_col_ref")
 #' dists <- c("nbinom", "poisson", "beta")
 #' 
 #' sim_out <- simulate_parameters(df, parameters = pars, distributions = dists, n = 10)
@@ -97,17 +97,17 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   allowed_distributions <- list(
     "flux" = c("normal", "poisson", "nbinom"),
     "turbs_e" = c("poisson"),
-    "p_col" = c("beta")
+    "p_col_ref" = c("beta")
   ) 
 
   # Define output column order
   col_order <- c(
     "flux", "a_macro", "f_prop", "h_prop", "h_prop_ref", "rotor_d", "rotor_d_ref", 
-    "turb_dist", "turb_dist_ref", "turbs_e", "turbs_e_ref", "p_col"
+    "turb_dist", "turb_dist_ref", "turbs_e", "turbs_e_ref", "p_col_ref"
   )
 
   # Mark experimental parameters
-  experimental_pars <- c("turbs_e", "p_col")
+  experimental_pars <- c("turbs_e", "p_col_ref")
 
   sample_methods <- get_sample_methods() # Get sampling dispatch
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename

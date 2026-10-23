@@ -7,7 +7,7 @@
 fcm(
   flux,
   a_macro,
-  f_prop = 1,
+  f_prop,
   h_prop,
   h_prop_ref,
   rotor_d,
@@ -16,7 +16,7 @@ fcm(
   turb_dist_ref,
   turbs_e,
   turbs_e_ref,
-  p_col
+  p_col_ref
 )
 }
 \arguments{
@@ -24,9 +24,8 @@ fcm(
 
 \item{a_macro}{The proportion of birds avoiding the planned wind farm. Should be a positive numeric value between 0 and 1.}
 
-\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1
-(default = 1). We genrally recommend using the default value, unless users have strong reasons to believe only part of the estimated
-flux is through the planned wind farm.}
+\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1. We generally recommend
+setting this to 1, unless users have strong reasons to believe only part of the estimated flux is through the planned wind farm.}
 
 \item{h_prop}{The proportion of flux at rotor height in the planned wind farm. Should be a positive numeric value between 0 and 1.}
 
@@ -44,7 +43,7 @@ flux is through the planned wind farm.}
 
 \item{turbs_e_ref}{The number of turbines encountered by birds in the reference wind farm. Should be a positive numeric value.}
 
-\item{p_col}{The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.}
+\item{p_col_ref}{The collision probability estimated in the reference wind farm. Should be a positive numeric value between 0 and 1.}
 }
 \value{
 An estimate of the number of bird collisions expected in the planned wind farm.
@@ -72,7 +71,7 @@ n_collisions <- fcm(flux = 10,
                     turb_dist_ref = 200,
                     turbs_e = 2,
                     turbs_e_ref = 1,
-                    p_col = 0.7)
+                    p_col_ref = 0.7)
 print(n_collisions)
 
 }

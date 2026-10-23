@@ -80,7 +80,7 @@ check_na_cols <- function(df) {
 get_cols_remove_rename <- function(parameters) {
 
  # Get all parameters and determine which weren't simulated
-  all_pars <- c("flux", "turbs_e", "p_col")
+  all_pars <- c("flux", "turbs_e", "p_col_ref")
   unsim_pars <- all_pars[!all_pars %in% parameters]
 
   # Determine columns to be removed

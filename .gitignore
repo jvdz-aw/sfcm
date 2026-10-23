@@ -7,3 +7,5 @@
 # Ignore HTML preview
 README.html
 inst/doc
+/doc/
+/Meta/

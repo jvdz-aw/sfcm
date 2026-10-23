@@ -19,8 +19,8 @@ test_df <- data.frame(
   turbs_e_mean = c(4, 2),
   turbs_e_sd = 0,
   turbs_e_ref = 4.242641,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
 test_that("simulate_parameters runs without errors", {
@@ -48,7 +48,7 @@ test_that("simulate_parameters runs without errors", {
                 "rotor_d", "rotor_d_ref",
                 "turb_dist", "turb_dist_ref",
                 "turbs_e", "turbs_e_ref",
-                "p_col")
+                "p_col_ref")
   expect_setequal(names(res), exp_cols)
 
   # Number of rows should be equal to nrows test_df times n_sims
@@ -60,7 +60,7 @@ test_that("simulate_parameters runs without errors", {
 
 test_that("simulate_parameters throws the expected warnings when simulating experimental parameters", {
 
-  parameters <- c("turbs_e", "p_col")
+  parameters <- c("turbs_e", "p_col_ref")
   distributions <- c("poisson", "beta")
   n_sims <- 10
 
@@ -79,7 +79,7 @@ test_that("simulate_parameters throws the expected warnings when simulating expe
 
   # Check warning messages
   expect_match(wrns[1], "Simulating values for 'turbs_e' is experimental and should not be used in formal studies.")
-  expect_match(wrns[2], "Simulating values for 'p_col' is experimental and should not be used in formal studies.")
+  expect_match(wrns[2], "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies.")
 
 })
 
@@ -123,19 +123,19 @@ test_that("simulate_parameters runs without errors when using a subset of parame
   # Result should contain a column `flux_samples`
   expect_true("flux" %in% names(res))
 
-  # Try another but with two parameters, which should also throw a warning about 'p_col' being experimental
+  # Try another but with two parameters, which should also throw a warning about 'p_col_ref' being experimental
   res_two_pars <- expect_warning(
     simulate_parameters(
       simulation_input = test_df, 
-      parameters = c("flux", "p_col"),
+      parameters = c("flux", "p_col_ref"),
       distributions = c("poisson", "beta"),
       n = 10
-    ), "Simulating values for 'p_col' is experimental and should not be used in formal studies."
+    ), "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies."
   )
 
-  # Result should contain two columns: `flux_samples` and `p_col_samples`
+  # Result should contain two columns: `flux_samples` and `p_col_ref_samples`
   expect_true("flux" %in% names(res_two_pars))
-  expect_true("p_col" %in% names(res_two_pars))
+  expect_true("p_col_ref" %in% names(res_two_pars))
 
 })
 
@@ -175,8 +175,8 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
     turbs_e_mean = c(4, 2),
     turbs_e_sd = 0,
     turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
   )
 
   expect_error(simulate_parameters(simulation_input = test_na_df, parameters = c("flux"),
@@ -210,8 +210,8 @@ test_that("calling simulate_parameters on dataframe missing a required columns r
     turbs_e_mean = c(4, 2),
     turbs_e_sd = 0,
     turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
   )
 
   expect_error(
@@ -243,8 +243,8 @@ test_that("specifying an invalid value for n returns the correct error", {
     turbs_e_mean = c(4, 2),
     turbs_e_sd = 0,
     turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
   )
 
   # Test each check performed on n
@@ -273,8 +273,8 @@ test_that("specifying an invalid distribution for a parameter returns the correc
     turbs_e_mean = c(4, 2),
     turbs_e_sd = 0,
     turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
   )
 
   expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "beta", n = 10), "Probability distribution 'beta' is unavailable for parameter 'flux'. Available options: 'normal', 'poisson', 'nbinom'.")
