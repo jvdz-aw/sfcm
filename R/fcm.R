@@ -13,9 +13,8 @@
 #' 
 #' @param flux The number of bird movements through the planned wind farm. Should be a positive numeric value.
 #' @param a_macro The proportion of birds avoiding the planned wind farm. Should be a positive numeric value between 0 and 1.
-#' @param f_prop The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1 
-#' (default = 1). We genrally recommend using the default value, unless users have strong reasons to believe only part of the estimated
-#' flux is through the planned wind farm.
+#' @param f_prop The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1. We generally recommend 
+#' setting this to 1, unless users have strong reasons to believe only part of the estimated flux is through the planned wind farm.
 #' @param h_prop The proportion of flux at rotor height in the planned wind farm. Should be a positive numeric value between 0 and 1.
 #' @param h_prop_ref The proportion of flux at rotor height in the reference wind farm. Should be a positive numeric value between 0 and 1.
 #' @param rotor_d The rotor diameter of turbines used in the planned wind farm. Should be a positive numeric value.
@@ -51,7 +50,7 @@
 #' 
 #' @export
 fcm <- function(flux, a_macro,
-                f_prop = 1,
+                f_prop,
                 h_prop, h_prop_ref,
                 rotor_d, rotor_d_ref,
                 turb_dist, turb_dist_ref,

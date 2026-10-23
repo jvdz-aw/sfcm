@@ -7,7 +7,7 @@
 fcm(
   flux,
   a_macro,
-  f_prop = 1,
+  f_prop,
   h_prop,
   h_prop_ref,
   rotor_d,
@@ -24,9 +24,8 @@ fcm(
 
 \item{a_macro}{The proportion of birds avoiding the planned wind farm. Should be a positive numeric value between 0 and 1.}
 
-\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1
-(default = 1). We genrally recommend using the default value, unless users have strong reasons to believe only part of the estimated
-flux is through the planned wind farm.}
+\item{f_prop}{The proportion of flux going through the wind farm. Should be a positive numeric value between 0 and 1. We generally recommend
+setting this to 1, unless users have strong reasons to believe only part of the estimated flux is through the planned wind farm.}
 
 \item{h_prop}{The proportion of flux at rotor height in the planned wind farm. Should be a positive numeric value between 0 and 1.}
 

@@ -18,6 +18,7 @@ test_that("Test a single mortality calculation using FCM", {
 
   mortality <- fcm(flux = flux,
                    a_macro = a_macro,
+                   f_prop = f_prop,
                    h_prop = h_prop,
                    h_prop_ref = h_prop_ref,
                    rotor_d = rotor_d,

@@ -46,6 +46,7 @@ run_model <- function(model_input) {
     model_input %>%
       mutate(n_collisions = pmap_dbl(list(flux = .data$flux,
                                           a_macro = .data$a_macro,
+                                          f_prop = .data$f_prop,
                                           h_prop = .data$h_prop,
                                           h_prop_ref = .data$h_prop_ref,
                                           rotor_d = .data$rotor_d,
