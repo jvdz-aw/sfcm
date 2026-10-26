@@ -14,11 +14,10 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 628.6667,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4.242641,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
 test_that("validate_sample_method_input handles 'n' correctly", {
@@ -59,8 +58,8 @@ test_that("test integration of validate_sample_method_input into sample method f
   expect_error(sample_poisson(data.frame(flux_mean = c(10, NA)), "flux", n = 10), "Parameter 'lambdas' contains NA or NaN") # Invalid parameters
 
   # sample_beta
-  expect_silent(sample_beta(data.frame(p_col_mean = c(0.1, 0.1), p_col_sd = c(0.01, 0.01)), "p_col", n = 10)) # Valid parameters
-  expect_error(sample_beta(data.frame(p_col_mean = c(0.1, NA), p_col_sd = c(NA, 0.01)), "p_col", n = 10), "Parameter 'means' contains NA or NaN") # Invalid parameters
+  expect_silent(sample_beta(data.frame(p_col_ref_mean = c(0.1, 0.1), p_col_ref_sd = c(0.01, 0.01)), "p_col_ref", n = 10)) # Valid parameters
+  expect_error(sample_beta(data.frame(p_col_ref_mean = c(0.1, NA), p_col_ref_sd = c(NA, 0.01)), "p_col_ref", n = 10), "Parameter 'means' contains NA or NaN") # Invalid parameters
 
   # sample_nbinom
   expect_silent(sample_nbinom(data.frame(flux_mean = c(10, 10), flux_sd = c(5, 5)), "flux", n = 10)) # Valid parameters
@@ -148,7 +147,7 @@ test_that("get_beta_params returns the correct shape parameters given a mean and
 })
 
 test_that("sample_beta returns values with correct mean and sd", {
-  samples <- sample_beta(test_df, "p_col", n = 1000)
+  samples <- sample_beta(test_df, "p_col_ref", n = 1000)
 
   # Length of list should be equal to number of rows in dataframe
   obs_length <- length(samples)
@@ -158,8 +157,8 @@ test_that("sample_beta returns values with correct mean and sd", {
   obs_means <- purrr::map_dbl(samples, mean)
   obs_sds <- purrr::map_dbl(samples, sd)
 
-  exp_means <- test_df$p_col_mean
-  exp_sds <- test_df$p_col_sd
+  exp_means <- test_df$p_col_ref_mean
+  exp_sds <- test_df$p_col_ref_sd
 
   # Means and sds should be close within tolerance
   expect_equal(obs_means, exp_means, tolerance = 0.2)
@@ -171,7 +170,7 @@ test_that("sample_beta correctly a vector of values equal to the man when sd is 
   par_sd <- 0
   reps <- 5
 
-  obs_samples <- sample_beta(data.frame(p_col_mean = par_mean, p_col_sd = par_sd), "p_col", n = reps)[[1]]
+  obs_samples <- sample_beta(data.frame(p_col_ref_mean = par_mean, p_col_ref_sd = par_sd), "p_col_ref", n = reps)[[1]]
   exp_samples <- rep(par_mean, reps)
 
   expect_equal(obs_samples, exp_samples)

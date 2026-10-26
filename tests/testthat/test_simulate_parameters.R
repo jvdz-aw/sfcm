@@ -16,24 +16,26 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 628.6667,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4.242641,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
 test_that("simulate_parameters runs without errors", {
 
-  parameters <- c("flux", "turbs_e", "p_col")
-  distributions <- c("poisson", "poisson", "beta")
+  parameters <- "flux"
+  distributions <- "poisson"
   n_sims <- 10
 
   # Should run without errors
-  res <- expect_no_error(simulate_parameters(simulation_input = test_df,
-                                             parameters = parameters,
-                                             distributions = distributions,
-                                             n = n_sims))
+  res <- expect_no_error(
+    simulate_parameters(
+      simulation_input = test_df,
+      parameters = parameters,
+      distributions = distributions,
+      n = n_sims
+    ))
 
   # Check whether the correct columns are returned
   exp_cols <- c("species",
@@ -45,12 +47,45 @@ test_that("simulate_parameters runs without errors", {
                 "rotor_d", "rotor_d_ref",
                 "turb_dist", "turb_dist_ref",
                 "turbs_e", "turbs_e_ref",
-                "p_col")
+                "p_col_ref")
   expect_setequal(names(res), exp_cols)
 
   # Number of rows should be equal to nrows test_df times n_sims
   exp_nrows <- nrow(test_df) * n_sims
   expect_equal(nrow(res), exp_nrows)
+
+})
+
+
+test_that("simulate_parameters throws the expected warnings when simulating experimental parameters", {
+
+  parameters <- "p_col_ref"
+  distributions <- "beta"
+  n_sims <- 10
+
+  # Should throw one warning, which we'll capture and test
+  wrns <- capture_warnings(
+    simulate_parameters(
+      simulation_input = test_df,
+      parameters = parameters,
+      distributions = distributions,
+      n = n_sims
+    )
+  )
+
+  # Check whether one warning is thrown
+  expect_length(wrns, 1)
+
+  # Check warning message
+  expect_match(wrns[1], "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies.")
+
+})
+
+
+test_that("simulate_parameters fails when selecting turbs_e for simulation", {
+
+  # turbs_e is not supported for simulation and should throw an error
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "turbs_e", distributions = "poisson", n = 10), "The following parameter cannot be simulated: turbs_e")
 
 })
 
@@ -94,14 +129,19 @@ test_that("simulate_parameters runs without errors when using a subset of parame
   # Result should contain a column `flux_samples`
   expect_true("flux" %in% names(res))
 
-  # Try another but with two parameters
-  res_two_pars <- expect_no_error(simulate_parameters(simulation_input = test_df, parameters = c("flux", "p_col"),
-                                                      distributions = c("poisson", "beta"),
-                                                      n = 10))
+  # Try another but with two parameters, which should also throw a warning about 'p_col_ref' being experimental
+  res_two_pars <- expect_warning(
+    simulate_parameters(
+      simulation_input = test_df, 
+      parameters = c("flux", "p_col_ref"),
+      distributions = c("poisson", "beta"),
+      n = 10
+    ), "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies."
+  )
 
-  # Result should contain two columns: `flux_samples` and `p_col_samples`
+  # Result should contain two columns: `flux_samples` and `p_col_ref_samples`
   expect_true("flux" %in% names(res_two_pars))
-  expect_true("p_col" %in% names(res_two_pars))
+  expect_true("p_col_ref" %in% names(res_two_pars))
 
 })
 
@@ -138,11 +178,10 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
     rotor_d_ref = 60,
     turb_dist = 628.6667,
     turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
+    turbs_e = c(4, 2),
     turbs_e_ref = 4.242641,
-    p_col_mean = c(0.5, 0.8),
-    p_col_sd = c(0.05, 0.1)
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
   )
 
   expect_error(simulate_parameters(simulation_input = test_na_df, parameters = c("flux"),
@@ -153,7 +192,92 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
 
 
 test_that("simulate_parameters correctly returns a `model_input` object", {
-  parameters <- c("flux", "turbs_e")
-  distributions <- c("nbinom", "poisson")
+  parameters <- "flux"
+  distributions <- "nbinom"
   expect_true(inherits(simulate_parameters(test_df, parameters, distributions), "model_input"))
+})
+
+
+test_that("calling simulate_parameters on dataframe missing a required columns returns the correct error", {
+
+  # Define a test dataframe with two rows and some NAs
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e = c(4, 2),
+    turbs_e_ref = 4.242641,
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
+  )
+
+  expect_error(
+    simulate_parameters(
+      simulation_input = test_df, 
+      parameters = c("flux"),
+      distributions = "poisson",
+      n = 10
+    ),
+    "Missing required columns for parameter flux: flux_sd"
+  )
+})
+
+
+test_that("specifying an invalid value for n returns the correct error", {
+
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e = c(4, 2),
+    turbs_e_ref = 4.242641,
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
+  )
+
+  # Test each check performed on n
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "poisson", n = "1"), "'n' must be a single positive integer.")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "poisson", n = c(1,1)), "'n' must be a single positive integer.")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "poisson", n = -1), "'n' must be a single positive integer.")
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "poisson", n = 1.1), "'n' must be a single positive integer.")
+
+})
+
+
+test_that("specifying an invalid distribution for a parameter returns the correct error", {
+
+  test_df <- data.frame(
+    species = c("A", "B"),
+    flux_mean = c(50, 100),
+    flux_sd = c(10, 50),
+    a_macro = 0.95,
+    f_prop = 1,
+    h_prop = 0.46961326,
+    h_prop_ref = 0.67,
+    rotor_d = 170,
+    rotor_d_ref = 60,
+    turb_dist = 628.6667,
+    turb_dist_ref = 250,
+    turbs_e = c(4, 2),
+    turbs_e_ref = 4.242641,
+    p_col_ref_mean = c(0.5, 0.8),
+    p_col_ref_sd = c(0.05, 0.1)
+  )
+
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = c("flux"), distributions = "beta", n = 10), "Probability distribution 'beta' is unavailable for parameter 'flux'. Available options: 'normal', 'poisson', 'nbinom'.")
 })

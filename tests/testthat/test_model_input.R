@@ -15,7 +15,7 @@ test_that("validate_model_input raises error on non-tibble input", {
 })
 
 test_that("validate_model_input raises error on missing columns in tibble input", {
-  exp_err_msg <- "`x` is missing the following required columns: flux, a_macro, f_prop, h_prop, h_prop_ref, rotor_d, rotor_d_ref, turb_dist, turb_dist_ref, turbs_e, turbs_e_ref, p_col"
+  exp_err_msg <- "`x` is missing the following required columns: flux, a_macro, f_prop, h_prop, h_prop_ref, rotor_d, rotor_d_ref, turb_dist, turb_dist_ref, turbs_e, turbs_e_ref, p_col_ref"
   expect_error(validate_model_input(test_tibble), exp_err_msg)
 })
 
@@ -33,7 +33,7 @@ test_that("validate_model_input raises error on columns with invalid numeric val
     turb_dist_ref = 200,
     turbs_e = 2,
     turbs_e_ref = 1.5,
-    p_col = 0.8
+    p_col_ref = 0.8
   )
 
   exp_err_msg <- "`x` contains invalid numeric values in the following columns: flux"
@@ -54,10 +54,10 @@ test_that("validate_model_input raises error on columns with invalid numeric ran
     turb_dist_ref = 200,
     turbs_e = 2,
     turbs_e_ref = 1.5,
-    p_col = 4
+    p_col_ref = 4
   )
 
-  exp_err_msg <- "`x` contains invalid numeric range values in the following columns: a_macro, p_col"
+  exp_err_msg <- "`x` contains invalid numeric range values in the following columns: a_macro, p_col_ref"
   expect_error(validate_model_input(test_tibble_invalid_numrange), exp_err_msg)
 })
 
@@ -75,7 +75,7 @@ test_that("model_input creates new class object succesfully", {
     turb_dist_ref = 200,
     turbs_e = 2,
     turbs_e_ref = 1.5,
-    p_col = c(0.8, 0.6))
+    p_col_ref = c(0.8, 0.6))
 
     expect_false(inherits(test_df, "model_input"))
     expect_true(inherits(model_input(test_df), "model_input"))

@@ -50,7 +50,7 @@ validate_model_input <- function(x) {
     "rotor_d", "rotor_d_ref", 
     "turb_dist", "turb_dist_ref", 
     "turbs_e", "turbs_e_ref",
-    "p_col"
+    "p_col_ref"
   )
 
   if (!all(required_cols %in% names(x))) {
@@ -63,7 +63,7 @@ validate_model_input <- function(x) {
     stop("`x` contains invalid numeric values in the following columns: ", paste0(num_cols[!valid_numcols], collapse = ", "), call. = FALSE)
   }
 
-  numrange_cols <- c("a_macro", "f_prop", "h_prop", "h_prop_ref", "p_col")
+  numrange_cols <- c("a_macro", "f_prop", "h_prop", "h_prop_ref", "p_col_ref")
   valid_numrange <- purrr::map_lgl(x[numrange_cols], is_valid_numrange)
   if (!all(valid_numrange)) {
     stop("`x` contains invalid numeric range values in the following columns: ", paste0(numrange_cols[!valid_numrange], collapse = ", "), call. = FALSE)
@@ -98,7 +98,7 @@ validate_model_input <- function(x) {
 #'   turb_dist_ref = 200,
 #'   turbs_e = 2,
 #'   turbs_e_ref = 1.5,
-#'   p_col = c(0.8, 0.6)))
+#'   p_col_ref = c(0.8, 0.6)))
 #' 
 #' class(df)
 #'

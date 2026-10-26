@@ -7,6 +7,7 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/jvdz-aw/sfcm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jvdz-aw/sfcm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of **sfcm** is to provide tools for estimating bird collisions
@@ -23,26 +24,19 @@ allows for modelling uncertainty in parameter estimates via simulation.
 
 ## Installation
 
-You can install the development version of sfcm from
-[GitHub](https://github.com/jvdz-aw/sfcm) with:
+You can install the development version from
+[GitHub](https://github.com/jvdz-aw/sfcm) with `pak`:
 
 ``` r
 # install.packages("pak")
 pak::pak("jvdz-aw/sfcm")
 ```
 
-Or using:
+Or using `devtools`:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("jvdz-aw/sfcm")
-```
-
-Alternatively, you can download the binary version you prefer and
-install it with:
-
-``` r
-install.packages("sfcm_0.1.0.tar.gz")
 ```
 
 ## Example
@@ -67,16 +61,15 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 600,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
 # Define what parameters to simulate and which probability distributions to use for random sampling
-pars <- c("flux", "turbs_e", "p_col")
-dists <- c("nbinom", "poisson", "beta")
+pars <- c("flux", "p_col_ref")
+dists <- c("nbinom", "beta")
 
 # Perform simulation using n = 10 iterations
 sim_out <- simulate_parameters(test_df, parameters = pars, distributions = dists, n = 10)
@@ -96,8 +89,7 @@ for each parameter that can be simulated.
 | Parameter | Supported probability distribution |
 |-----------|------------------------------------|
 | flux      | Normal, Poisson, negative binomial |
-| turbs_e   | Poisson                            |
-| p_col     | Beta                               |
+| p_col_ref | Beta                               |
 
 ## Contributing
 

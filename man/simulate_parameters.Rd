@@ -7,16 +7,19 @@
 simulate_parameters(simulation_input, parameters, distributions, n = 1000)
 }
 \arguments{
-\item{simulation_input}{A dataframe containing input parameters for the simulation. Parameters to
-simulate should have the following column names: \verb{<par>_mean} and \verb{<par>_sd}, where \verb{<par>} is the name
-of the parameter to simulate.}
+\item{simulation_input}{A dataframe containing input parameters. For each parameter in
+\code{parameters}, the dataframe must contain columns \verb{<par>_mean} and \verb{<par>_sd} where
+\verb{<par>} is the parameter name. Other columns (e.g., \code{a_macro}, \code{f_prop}, etc.) are
+passed through to the output.}
 
-\item{parameters}{A string vector of parameters to simulate. Valid options are: \code{flux}, \code{turbs_e} or \code{p_col}.}
+\item{parameters}{A character vector of parameters to simulate. Valid options are: \code{flux} or
+\code{p_col_ref} (\strong{EXPERIMENTAL}).}
 
-\item{distributions}{A string vector of probability distributions to use for generating random samples of a
-parameter. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
+\item{distributions}{A character vector of probability distributions to use for generating random samples of a
+parameter, one for each parameter in \code{parameters}. Must have the same length as \code{parameters}. Valid options are: \code{normal}, \code{poisson}, \code{nbinom} and \code{beta}.}
 
-\item{n}{The number of random samples to generate.}
+\item{n}{The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000
+to prevent correlation among parameters.}
 }
 \value{
 A \code{model_input} object with \emph{n} rows containing simulated parameters.
@@ -28,7 +31,10 @@ probability distributions. The function uses a dataframe of parameter values
 probability distributions to apply (\code{distributions}), and the number of samples to
 generate (\code{n}), returning a simulated \code{model_input} object that can be supplied to \code{\link[=run_model]{run_model()}}.
 
-Simulation is currently only supported for the parameters \code{flux}, \code{turbs_e}, and \code{p_col}.
+We currently recommend to only simulate \code{flux} values. Simulating \code{p_col_ref} values
+is considered \strong{EXPERIMENTAL} at this stage; it is available for exploratory analysis
+but should \emph{not} be used in formal studies.
+
 The normal, Poisson, negative binomial, and beta distributions are implemented,
 but not all distributions are available for every parameter. See the \strong{Parameters}
 section for details on which distributions can be used with each parameter.
@@ -50,15 +56,14 @@ df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 600,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4,
-  p_col_mean = c(0.5, 0.8),
-  p_col_sd = c(0.05, 0.1)
+  p_col_ref_mean = c(0.5, 0.8),
+  p_col_ref_sd = c(0.05, 0.1)
 )
 
-pars <- c("flux", "turbs_e", "p_col")
-dists <- c("nbinom", "poisson", "beta")
+pars <- c("flux", "p_col_ref")
+dists <- c("nbinom", "beta")
 
 sim_out <- simulate_parameters(df, parameters = pars, distributions = dists, n = 10)
 class(sim_out)
