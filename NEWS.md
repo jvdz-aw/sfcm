@@ -1,8 +1,38 @@
-# sfcm (development version)
+# sfcm 0.3.0
+
+## New features
+
+* Added tutorial vignettes that describe how to run the deterministic and stochastic flux collision models (#14).
+
+* `simulate_parameters()` now prints a warning when simulating values for experimental parameters, which currently applies to `p_col_ref` (#11).
+
+* Added input validation to `simulate_parameters()`: required `<parameter>_mean` and `<parameter>_sd` columns are now checked before sampling, and `n` must be a single positive integer (#15).
+
+* Optimized `simulation_id` creation and sampling logic in `simulate_parameters()` (#15).
+
+## Bug fixes
+
+* `simulate_parameters()` now only uses columns that exist in the simulation output when ordering columns (#15).
+
+* Improved the error message thrown when a probability distribution is unavailable for a parameter (#15).
+
+* Added a missing `mutate` import from dplyr (#15).
+
+## Other changes
+
+* Added a standard R CMD check workflow that runs on pull requests and pushes to the main branch (#12).
+
+* Updated the installation instructions in the README (#13).
+
+* Clarified the documentation of `simulate_parameters()`: the recommendation for `n`, the relationship between `parameters` and `distributions`, and which columns are required in `simulation_input` (#15).
 
 ## Possible breaking changes
 
-* `simulate_parameters()` no longer supports simulating values for the `turbs_e` parameter. Simulation input data frames should provide `turbs_e` as a regular column (as in `model_input` data frames) instead of `turbs_e_mean` and `turbs_e_sd` columns.
+* `simulate_parameters()` no longer supports simulating values for the `turbs_e` parameter (#17). Simulation input data frames should provide `turbs_e` as a regular column (as in `model_input` data frames) instead of `turbs_e_mean` and `turbs_e_sd` columns.
+
+* The `p_col` parameter has been renamed to `p_col_ref` (#16). Scripts and data frames using `p_col` should use `p_col_ref` instead.
+
+* `f_prop` is now a required argument in `fcm()` (#16).
 
 # sfcm 0.2.0
 
