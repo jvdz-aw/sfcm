@@ -14,8 +14,7 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 628.6667,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4.242641,
   p_col_ref_mean = c(0.5, 0.8),
   p_col_ref_sd = c(0.05, 0.1)

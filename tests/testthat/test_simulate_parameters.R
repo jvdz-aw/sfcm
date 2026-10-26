@@ -16,8 +16,7 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 628.6667,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4.242641,
   p_col_ref_mean = c(0.5, 0.8),
   p_col_ref_sd = c(0.05, 0.1)
@@ -60,11 +59,11 @@ test_that("simulate_parameters runs without errors", {
 
 test_that("simulate_parameters throws the expected warnings when simulating experimental parameters", {
 
-  parameters <- c("turbs_e", "p_col_ref")
-  distributions <- c("poisson", "beta")
+  parameters <- "p_col_ref"
+  distributions <- "beta"
   n_sims <- 10
 
-  # Should throw two warnings, which we'll capture and test
+  # Should throw one warning, which we'll capture and test
   wrns <- capture_warnings(
     simulate_parameters(
       simulation_input = test_df,
@@ -74,12 +73,19 @@ test_that("simulate_parameters throws the expected warnings when simulating expe
     )
   )
 
-  # Check whether two warnings are thrown
-  expect_length(wrns, 2)
+  # Check whether one warning is thrown
+  expect_length(wrns, 1)
 
-  # Check warning messages
-  expect_match(wrns[1], "Simulating values for 'turbs_e' is experimental and should not be used in formal studies.")
-  expect_match(wrns[2], "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies.")
+  # Check warning message
+  expect_match(wrns[1], "Simulating values for 'p_col_ref' is experimental and should not be used in formal studies.")
+
+})
+
+
+test_that("simulate_parameters fails when selecting turbs_e for simulation", {
+
+  # turbs_e is not supported for simulation and should throw an error
+  expect_error(simulate_parameters(simulation_input = test_df, parameters = "turbs_e", distributions = "poisson", n = 10), "The following parameter cannot be simulated: turbs_e")
 
 })
 
@@ -172,8 +178,7 @@ test_that("calling check_na_cols on simulation input containing NAs correctly re
     rotor_d_ref = 60,
     turb_dist = 628.6667,
     turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
+    turbs_e = c(4, 2),
     turbs_e_ref = 4.242641,
     p_col_ref_mean = c(0.5, 0.8),
     p_col_ref_sd = c(0.05, 0.1)
@@ -207,8 +212,7 @@ test_that("calling simulate_parameters on dataframe missing a required columns r
     rotor_d_ref = 60,
     turb_dist = 628.6667,
     turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
+    turbs_e = c(4, 2),
     turbs_e_ref = 4.242641,
     p_col_ref_mean = c(0.5, 0.8),
     p_col_ref_sd = c(0.05, 0.1)
@@ -240,8 +244,7 @@ test_that("specifying an invalid value for n returns the correct error", {
     rotor_d_ref = 60,
     turb_dist = 628.6667,
     turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
+    turbs_e = c(4, 2),
     turbs_e_ref = 4.242641,
     p_col_ref_mean = c(0.5, 0.8),
     p_col_ref_sd = c(0.05, 0.1)
@@ -270,8 +273,7 @@ test_that("specifying an invalid distribution for a parameter returns the correc
     rotor_d_ref = 60,
     turb_dist = 628.6667,
     turb_dist_ref = 250,
-    turbs_e_mean = c(4, 2),
-    turbs_e_sd = 0,
+    turbs_e = c(4, 2),
     turbs_e_ref = 4.242641,
     p_col_ref_mean = c(0.5, 0.8),
     p_col_ref_sd = c(0.05, 0.1)

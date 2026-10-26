@@ -18,11 +18,11 @@ This vignette demonstrates how to estimate bird mortality for planned wind farms
 
 ### Parameter simulation
 
-To generate values for a given parameter, we sample from its probability distribution using the `simulate_parameters()` function. Parameter simulation is available for `flux`, `turbs_e`, and `p_col_ref`.
+To generate values for a given parameter, we sample from its probability distribution using the `simulate_parameters()` function. Parameter simulation is available for `flux` and `p_col_ref`.
 
-> Note: parameter simulation for `turbs_e` and `p_col_ref` is _experimental_.
+> Note: parameter simulation for `p_col_ref` is _experimental_.
 
-The function requires an input data frame (a `data.frame` or `tibble`) containing the necessary model inputs. Its structure matches a standard `model_input` data frame, except for the parameters you wish to simulate. To generate random values for `flux`, `turbs_e`, or `p_col_ref`, provide mean and standard deviation columns instead, named using the convention `<PARAMETER>_mean` and `<PARAMETER>_sd`. 
+The function requires an input data frame (a `data.frame` or `tibble`) containing the necessary model inputs. Its structure matches a standard `model_input` data frame, except for the parameters you wish to simulate. To generate random values for `flux` or `p_col_ref`, provide mean and standard deviation columns instead, named using the convention `<PARAMETER>_mean` and `<PARAMETER>_sd`. 
 
 > Note: you only need a `<PARAMETER>_mean` column when generating random values using a _Poisson_ distribution. In this case the `<PARAMETER>_sd` will be simply ignored.
 
