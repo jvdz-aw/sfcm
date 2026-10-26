@@ -7,8 +7,8 @@
 #' probability distributions to apply (`distributions`), and the number of samples to 
 #' generate (`n`), returning a simulated `model_input` object that can be supplied to [run_model()].
 #' 
-#' We currently recommend to only simulate `flux` values. Simulating `turbs_e` and `p_col_ref` values
-#' is considered \strong{EXPERIMENTAL} at this stage; they are available for exploratory analysis
+#' We currently recommend to only simulate `flux` values. Simulating `p_col_ref` values
+#' is considered \strong{EXPERIMENTAL} at this stage; it is available for exploratory analysis
 #' but should \emph{not} be used in formal studies.
 #' 
 #' The normal, Poisson, negative binomial, and beta distributions are implemented, 
@@ -23,8 +23,8 @@
 #' `parameters`, the dataframe must contain columns `<par>_mean` and `<par>_sd` where
 #' `<par>` is the parameter name. Other columns (e.g., `a_macro`, `f_prop`, etc.) are
 #' passed through to the output.
-#' @param parameters A character vector of parameters to simulate. Valid options are: `flux`, 
-#' `turbs_e` (\strong{EXPERIMENTAL}) or `p_col_ref` (\strong{EXPERIMENTAL}).
+#' @param parameters A character vector of parameters to simulate. Valid options are: `flux` or
+#' `p_col_ref` (\strong{EXPERIMENTAL}).
 #' @param distributions A character vector of probability distributions to use for generating random samples of a 
 #' parameter, one for each parameter in `parameters`. Must have the same length as `parameters`. Valid options are: `normal`, `poisson`, `nbinom` and `beta`.
 #' @param n The number of random samples to generate per row. For simulating multiple parameters, we recommend n > 10000 
@@ -45,15 +45,14 @@
 #'   rotor_d_ref = 60,
 #'   turb_dist = 600,
 #'   turb_dist_ref = 250,
-#'   turbs_e_mean = c(4, 2),
-#'   turbs_e_sd = 0,
+#'   turbs_e = c(4, 2),
 #'   turbs_e_ref = 4,
 #'   p_col_ref_mean = c(0.5, 0.8),
 #'   p_col_ref_sd = c(0.05, 0.1)
 #' )
 #' 
-#' pars <- c("flux", "turbs_e", "p_col_ref")
-#' dists <- c("nbinom", "poisson", "beta")
+#' pars <- c("flux", "p_col_ref")
+#' dists <- c("nbinom", "beta")
 #' 
 #' sim_out <- simulate_parameters(df, parameters = pars, distributions = dists, n = 10)
 #' class(sim_out)
@@ -96,9 +95,8 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   # Define which distributions are allowed for parameters that can be simulated
   allowed_distributions <- list(
     "flux" = c("normal", "poisson", "nbinom"),
-    "turbs_e" = c("poisson"),
     "p_col_ref" = c("beta")
-  ) 
+  )
 
   # Define output column order
   col_order <- c(
@@ -107,7 +105,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   )
 
   # Mark experimental parameters
-  experimental_pars <- c("turbs_e", "p_col_ref")
+  experimental_pars <- "p_col_ref"
 
   sample_methods <- get_sample_methods() # Get sampling dispatch
   cols_to_remove_rename <- get_cols_remove_rename(parameters)   # Determine columns to remove/rename

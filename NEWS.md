@@ -1,3 +1,9 @@
+# sfcm (development version)
+
+## Possible breaking changes
+
+* `simulate_parameters()` no longer supports simulating values for the `turbs_e` parameter. Simulation input data frames should provide `turbs_e` as a regular column (as in `model_input` data frames) instead of `turbs_e_mean` and `turbs_e_sd` columns.
+
 # sfcm 0.2.0
 
 ## New features

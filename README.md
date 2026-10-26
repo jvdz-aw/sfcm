@@ -61,16 +61,15 @@ test_df <- data.frame(
   rotor_d_ref = 60,
   turb_dist = 600,
   turb_dist_ref = 250,
-  turbs_e_mean = c(4, 2),
-  turbs_e_sd = 0,
+  turbs_e = c(4, 2),
   turbs_e_ref = 4,
   p_col_ref_mean = c(0.5, 0.8),
   p_col_ref_sd = c(0.05, 0.1)
 )
 
 # Define what parameters to simulate and which probability distributions to use for random sampling
-pars <- c("flux", "turbs_e", "p_col_ref")
-dists <- c("nbinom", "poisson", "beta")
+pars <- c("flux", "p_col_ref")
+dists <- c("nbinom", "beta")
 
 # Perform simulation using n = 10 iterations
 sim_out <- simulate_parameters(test_df, parameters = pars, distributions = dists, n = 10)
@@ -90,7 +89,6 @@ for each parameter that can be simulated.
 | Parameter | Supported probability distribution |
 |-----------|------------------------------------|
 | flux      | Normal, Poisson, negative binomial |
-| turbs_e   | Poisson                            |
 | p_col_ref | Beta                               |
 
 ## Contributing
