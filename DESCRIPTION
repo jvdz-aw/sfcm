@@ -9,6 +9,8 @@ Authors@R: c(
 Description: Tools for estimating bird collisions in planned wind farms using a stochastic Flux Collision Model that incorporates parameter uncertainty.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
 LazyData: true
 Roxygen: list(markdown = TRUE)
 Imports: 
