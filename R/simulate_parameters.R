@@ -164,7 +164,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   simulation_output <- simulation_output %>%
     select(!any_of(cols_to_remove_rename$to_remove)) %>%
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
-    relocate(all_of(col_order), .after = last_col())
+    relocate(all_of(existing_cols), .after = last_col())
 
   model_input(simulation_output) # Converts simulation output to `model_input` object
 }
