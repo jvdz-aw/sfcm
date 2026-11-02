@@ -41,7 +41,7 @@
 #' @export
 run_model <- function(model_input) {
   if (!inherits(model_input, "model_input")) {
-    stop("Model input is not a `model_input` object.")
+    stop("Model input is not a `model_input` object.", call. = FALSE)
   } else {
     model_input %>%
       mutate(n_collisions = pmap_dbl(list(flux = .data$flux,

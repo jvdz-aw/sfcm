@@ -75,18 +75,18 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
 
   # Check dataframe type
   if (!is_valid_dataframe(simulation_input)) {
-    stop("Simulation input is not a dataframe or tibble.")
+    stop("Simulation input is not a dataframe or tibble.", call. = FALSE)
   }
 
   # Check for NAs in columns
   na_cols <- check_na_cols(simulation_input)
   if (any(na_cols)) {
-    stop(paste("The following columns in simulation input contain NAs:", names(simulation_input)[na_cols]))
+    stop(paste("The following columns in simulation input contain NAs:", names(simulation_input)[na_cols]), call. = FALSE)
   }
 
   # Parameter and distributions vectors should have equal lengths, if not one of them is not set correctly
   if (length(parameters) != length(distributions)) {
-    stop("Parameters and distributions vectors have different lengths.")
+    stop("Parameters and distributions vectors have different lengths.", call. = FALSE)
   }
 
   # Map parameter names to distributions by converting to named vector
@@ -114,18 +114,18 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   for (parameter in parameters) {
 
     if (parameter %in% experimental_pars) {
-      warning(paste0("Simulating values for '", parameter, "' is experimental and should not be used in formal studies."))
+      warning(paste0("Simulating values for '", parameter, "' is experimental and should not be used in formal studies."), call. = FALSE)
     }
 
     if (!parameter %in% names(allowed_distributions)) {
-      stop(paste("The following parameter cannot be simulated:", parameter))
+      stop(paste("The following parameter cannot be simulated:", parameter), call. = FALSE)
     }
 
     # Check whether required columns exist
     req_cols <- c(paste0(parameter, "_mean"), paste0(parameter, "_sd"))
     missing_cols <- req_cols[!req_cols %in% names(simulation_input)]
     if (length(missing_cols) > 0) {
-      stop(paste0("Missing required columns for parameter ", parameter, ": ", paste(missing_cols, collapse = ", ")))
+      stop(paste0("Missing required columns for parameter ", parameter, ": ", paste(missing_cols, collapse = ", ")), call. = FALSE)
     }
 
     # Check whether distribution is valid for parameter
@@ -135,14 +135,14 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
         sprintf(
           "Probability distribution '%s' is unavailable for parameter '%s'. Available options: '%s'.",
           selected_distribution, parameter, paste(allowed_distributions[[parameter]], collapse = "', '")
-        )
-      )
+        ),
+        call. = FALSE)
     }
   }
 
   # Check whether n is a positive integer
   if (!(is.numeric(n)) || length(n) != 1 || n <= 0 || n %% 1 != 0) {
-    stop("'n' must be a single positive integer.")
+    stop("'n' must be a single positive integer.", call. = FALSE)
   }
 
   # Create base dataframe with repeated rows
@@ -164,7 +164,7 @@ simulate_parameters <- function(simulation_input, parameters, distributions, n =
   simulation_output <- simulation_output %>%
     select(!any_of(cols_to_remove_rename$to_remove)) %>%
     rename_with(~str_remove(.x, "_mean|_samples"), any_of(cols_to_remove_rename$to_rename)) %>%
-    relocate(all_of(col_order), .after = last_col())
+    relocate(all_of(existing_cols), .after = last_col())
 
   model_input(simulation_output) # Converts simulation output to `model_input` object
 }

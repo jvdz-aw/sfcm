@@ -9,7 +9,7 @@
 #' 
 #' @keywords internal
 is_valid_numcol <- function(col_values) {
-  is.numeric(col_values) & all(col_values >= 0) & all(!is.na(col_values))
+  is.numeric(col_values) & all(col_values > 0) & all(!is.na(col_values))
 }
 
 
@@ -24,7 +24,7 @@ is_valid_numcol <- function(col_values) {
 #' 
 #' @keywords internal
 is_valid_numrange <- function(col_values) {
-  is.numeric(col_values) & all(col_values >= 0) & all(col_values <= 1) & all(!is.na(col_values))
+  is.numeric(col_values) & all(col_values > 0) & all(col_values <= 1) & all(!is.na(col_values))
 }
 
 
