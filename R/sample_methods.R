@@ -53,6 +53,7 @@ validate_sample_method_input <- function(n, ...) {
 #' @keywords internal
 #' 
 #' @importFrom purrr map2
+#' @importFrom stats rnorm
 sample_norm <- function(df, param, n) {
 
   # Check whether 'df' is a dataframe
@@ -93,6 +94,7 @@ sample_norm <- function(df, param, n) {
 #' @keywords internal
 #' 
 #' @importFrom purrr map
+#' @importFrom stats rpois
 sample_poisson <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
@@ -209,6 +211,7 @@ sample_beta <- function(df, param, n) {
 #' @keywords internal
 #' 
 #' @importFrom purrr map2
+#' @importFrom stats rnbinom
 sample_nbinom <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
