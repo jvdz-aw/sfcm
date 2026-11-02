@@ -239,7 +239,7 @@ sample_nbinom <- function(df, param, n) {
   ks <- means^2 / (sds^2 - means)
 
   # Check whether dispersion is greater than zero
-  if (any(ks <= 0)) {
+  if (any(!is.finite(ks) | ks <= 0)) {
     stop("Dispersion must be greater than zero.", call. = FALSE)
   }
   # Generate random negative binomial samples
