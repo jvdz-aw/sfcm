@@ -12,7 +12,7 @@
 validate_sample_method_input <- function(n, ...) {
   # Validate n (sample size)
   if (length(n) != 1 || !is.numeric(n) || n < 0 || n %% 1 != 0) {
-    stop("'n' must be a single non-negative integer.")
+    stop("'n' must be a single non-negative integer.", call. = FALSE)
   }
 
   # Capture other parameters
@@ -23,17 +23,17 @@ validate_sample_method_input <- function(n, ...) {
     
     # Check for NA/NaN
     if (any(is.na(val))) {
-      stop(sprintf("Parameter '%s' contains NA or NaN values.", name))
+      stop(sprintf("Parameter '%s' contains NA or NaN values.", name), call. = FALSE)
     }
     
     # Check for non-numeric types
     if (!is.numeric(val)) {
-      stop(sprintf("Parameter '%s' must be numeric.", name))
+      stop(sprintf("Parameter '%s' must be numeric.", name), call. = FALSE)
     }
     
     # Check for Infinite values
     if (any(!is.finite(val))) {
-      stop(sprintf("Parameter '%s' must be finite (no Inf).", name))
+      stop(sprintf("Parameter '%s' must be finite (no Inf).", name), call. = FALSE)
     }
   }
 }
@@ -58,7 +58,7 @@ sample_norm <- function(df, param, n) {
 
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
-    stop("Parameter 'df' must be a data.frame or tibble.")
+    stop("Parameter 'df' must be a data.frame or tibble.", call. = FALSE)
   }
 
   # Get parameter values
@@ -70,9 +70,9 @@ sample_norm <- function(df, param, n) {
 
   # Check whether standard deviation is greater than zero
   if (any(sds < 0)) {
-    stop("Standard deviation must be non-negative.")
+    stop("Standard deviation must be non-negative.", call. = FALSE)
   } else if (any(sds == 0)) {
-    warning("Standard deviation equal to zero for some entries. Function will default to return the mean instead of random sampling.")
+    warning("Standard deviation equal to zero for some entries. Function will default to return the mean instead of random sampling.", call. = FALSE)
   }
 
   # Generate random normal samples
@@ -98,7 +98,7 @@ sample_norm <- function(df, param, n) {
 sample_poisson <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
-    stop("Parameter 'df' must be a data.frame or tibble.")
+    stop("Parameter 'df' must be a data.frame or tibble.", call. = FALSE)
   }
 
   # Get parameter values
@@ -109,7 +109,7 @@ sample_poisson <- function(df, param, n) {
 
   # Check whether lambda is greater than zero
   if (any(lambdas < 0)) {
-    stop("Lambda must be greater than zero.")
+    stop("Lambda must be greater than zero.", call. = FALSE)
   }
 
   # Generate random Poisson samples
@@ -143,7 +143,7 @@ get_beta_params <- function(mu, sigma) {
 
   # Variance must be less than mean * (1 - mean)
   if (sigma2 >= mu * (1 - mu)) {
-    stop("The provided SD is too high for the given mean to form a valid beta distribution.")
+    stop("The provided SD is too high for the given mean to form a valid beta distribution.", call. = FALSE)
   }
 
   # Calculate shape parameters
@@ -174,7 +174,7 @@ get_beta_params <- function(mu, sigma) {
 sample_beta <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
-    stop("Parameter 'df' must be a data.frame or tibble.")
+    stop("Parameter 'df' must be a data.frame or tibble.", call. = FALSE)
   }
 
   # Get parameter values
@@ -215,7 +215,7 @@ sample_beta <- function(df, param, n) {
 sample_nbinom <- function(df, param, n) {
   # Check whether 'df' is a dataframe
   if (!inherits(df, "data.frame")) {
-    stop("Parameter 'df' must be a data.frame or tibble.")
+    stop("Parameter 'df' must be a data.frame or tibble.", call. = FALSE)
   }
 
   # Get parameter values
@@ -227,12 +227,12 @@ sample_nbinom <- function(df, param, n) {
 
   # Check whether mean is greater than zero
   if (any(means <= 0)) {
-    stop("Mean must be greater than zero.")
+    stop("Mean must be greater than zero.", call. = FALSE)
   }
 
   # Check whether sd is greater than zero (note that this is different from sample_norm)
   if (any(sds <= 0)) {
-    stop("Standard deviation must be greater than zero.")
+    stop("Standard deviation must be greater than zero.", call. = FALSE)
   }
 
   # Calculate dispersion parameter values
@@ -240,7 +240,7 @@ sample_nbinom <- function(df, param, n) {
 
   # Check whether dispersion is greater than zero
   if (any(ks <= 0)) {
-    stop("Dispersion must be greater than zero.")
+    stop("Dispersion must be greater than zero.", call. = FALSE)
   }
   # Generate random negative binomial samples
   map2(ks, means, ~rnbinom(n, size = .x, mu = .y))
