@@ -18,9 +18,7 @@ Imports:
     magrittr,
     purrr,
     rlang,
-    stringr,
     tibble,
-    tidyr,
     tidyselect
 Suggests: 
     knitr,
