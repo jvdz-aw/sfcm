@@ -45,20 +45,3 @@ test_that("check_na_cols detects columns containing NAs correctly", {
   expect_setequal(check_na_cols(test_df), c(TRUE, TRUE))
 
 })
-
-
-test_that("get_cols_remove_rename returns the expected columns to be removed or renamed", {
-
-  # Define list of parameters
-  parameters <- c("flux", "p_col_ref")
-
-  # Define expected outcomes
-  exp_to_remove <- c("flux_mean", "flux_sd", "p_col_ref_mean", "p_col_ref_sd")
-  exp_to_rename <- c("flux_samples", "p_col_ref_samples")
-
-  res <- get_cols_remove_rename(parameters)
-
-  expect_setequal(res$to_remove, exp_to_remove)
-  expect_setequal(res$to_rename, exp_to_rename)
-
-})

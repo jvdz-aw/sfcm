@@ -48,7 +48,7 @@ test_that("simulate_parameters runs without errors", {
                 "turb_dist", "turb_dist_ref",
                 "turbs_e", "turbs_e_ref",
                 "p_col_ref")
-  expect_setequal(names(res), exp_cols)
+  expect_equal(names(res), exp_cols)
 
   # Number of rows should be equal to nrows test_df times n_sims
   exp_nrows <- nrow(test_df) * n_sims
